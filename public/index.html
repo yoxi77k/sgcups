@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STUMBLE CUPS • ELITE TIER LIST</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,sans-serif;
+      background:radial-gradient(circle at top,#1b1038,#09090f 70%);
+      color:white;
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+ 
+    .bg{
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(120,0,255,.25), transparent 30%),
+        radial-gradient(circle at 80% 30%, rgba(0,180,255,.20), transparent 30%),
+        radial-gradient(circle at 50% 80%, rgba(255,0,128,.15), transparent 35%);
+      pointer-events:none;
+      filter:blur(20px);
+    }
+ 
+    header{
+      text-align:center;
+      padding:50px 20px 30px;
+    }
+ 
+    h1{
+      font-family:Orbitron,sans-serif;
+      font-size:clamp(2rem,6vw,4.5rem);
+      margin:0;
+      letter-spacing:3px;
+      background:linear-gradient(90deg,#8b5cf6,#06b6d4,#ec4899);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      text-shadow:0 0 30px rgba(139,92,246,.5);
+    }
+ 
+    .subtitle{
+      margin-top:10px;
+      color:#cbd5e1;
+      font-size:1rem;
+    }
+ 
+    .topbar{
+      display:flex;
+      justify-content:center;
+      gap:15px;
+      margin-top:25px;
+      flex-wrap:wrap;
+    }
+ 
+    button{
+      border:none;
+      padding:12px 18px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s;
+    }
+ 
+    .owner-btn{
+      background:linear-gradient(135deg,#7c3aed,#06b6d4);
+      color:white;
+      box-shadow:0 0 25px rgba(124,58,237,.45);
+    }
+ 
+    .owner-btn:hover{
+      transform:translateY(-2px) scale(1.02);
+    }
+ 
+    .add-btn{
+      background:#111827;
+      color:#e5e7eb;
+      border:1px solid rgba(255,255,255,.12);
+      display:none;
+    }
+ 
+    .add-btn.show{display:inline-block}
+ 
+    .container{
+      width:min(1200px,94%);
+      margin:0 auto 50px;
+    }
+ 
+    .tier{
+      display:grid;
+      grid-template-columns:120px 1fr;
+      gap:14px;
+      margin-bottom:18px;
+      align-items:stretch;
+    }
+ 
+    .label{
+      border-radius:22px;
+      padding:16px 14px;
+      text-align:center;
+      font-weight:800;
+      color:#fff;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      min-height:120px;
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+ 
+    .label .letter{
+      font-size:2.2rem;
+      line-height:1;
+      font-family:Orbitron,sans-serif;
+    }
+ 
+    .label .name{
+      margin-top:6px;
+      font-size:.9rem;
+      opacity:.95;
+    }
+ 
+    .label .count{
+      margin-top:8px;
+      font-size:.8rem;
+      opacity:.9;
+    }
+ 
+    .S{background:linear-gradient(180deg,#ffb703,#fb8500)}
+    .A{background:linear-gradient(180deg,#ef4444,#b91c1c)}
+    .B{background:linear-gradient(180deg,#8b5cf6,#6d28d9)}
+    .C{background:linear-gradient(180deg,#06b6d4,#0e7490)}
+    .D{background:linear-gradient(180deg,#64748b,#334155)}
+ 
+    .dropzone{
+      background:rgba(15,23,42,.82);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:22px;
+      padding:16px;
+      min-height:128px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+      align-content:flex-start;
+      backdrop-filter:blur(12px);
+      transition:border-color .2s, box-shadow .2s, background .2s;
+    }
+ 
+    .dropzone.dragover{
+      border-color:#60a5fa;
+      box-shadow:0 0 0 3px rgba(96,165,250,.18);
+      background:rgba(30,41,59,.92);
+    }
+ 
+    .player{
+      width:108px;
+      background:linear-gradient(180deg,#1f2937,#111827);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+      padding:10px;
+      text-align:center;
+      cursor:grab;
+      user-select:none;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      box-shadow:0 6px 18px rgba(0,0,0,.25);
+    }
+ 
+    .player:hover{
+      transform:translateY(-3px);
+      border-color:rgba(96,165,250,.55);
+      box-shadow:0 10px 24px rgba(59,130,246,.22);
+    }
+ 
+    .player.dragging{
+      opacity:.55;
+      transform:scale(.98);
+      cursor:grabbing;
+    }
+ 
+    .avatar{
+      width:100%;
+      aspect-ratio:1;
+      border-radius:14px;
+      background:linear-gradient(135deg,#8b5cf6,#06b6d4,#ec4899);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      font-size:1.2rem;
+      color:white;
+      margin-bottom:8px;
+    }
+ 
+    .player .pname{
+      font-size:.88rem;
+      font-weight:700;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+ 
+    .player .tag{
+      font-size:.72rem;
+      color:#94a3b8;
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+ 
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:20;
+    }
+ 
+    .modal.show{display:flex}
+ 
+    .card{
+      width:min(420px,100%);
+      background:#0f172a;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 20px 50px rgba(0,0,0,.45);
+    }
+ 
+    .card h2{
+      margin:0 0 10px;
+      font-family:Orbitron,sans-serif;
+    }
+ 
+    .card p{
+      color:#94a3b8;
+      margin-top:0;
+      margin-bottom:18px;
+    }
+ 
+    input, select{
+      width:100%;
+      padding:14px 15px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.1);
+      background:#111827;
+      color:white;
+      margin-bottom:12px;
+      outline:none;
+    }
+ 
+    .actions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+ 
+    .primary{
+      background:linear-gradient(135deg,#8b5cf6,#06b6d4);
+      color:white;
+    }
+ 
+    .secondary{
+      background:#1f2937;
+      color:#e5e7eb;
+    }
+ 
+    .hint{
+      margin-top:12px;
+      color:#64748b;
+      font-size:.82rem;
+      text-align:center;
+    }
+ 
+    @media (max-width:700px){
+      .tier{
+        grid-template-columns:1fr;
+      }
+      .label{
+        min-height:auto;
+        flex-direction:row;
+        align-items:center;
+        justify-content:space-between;
+        text-align:left;
+      }
+      .label .letter{
+        font-size:1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="bg"></div>
+ 
+<header>
+  <h1>STUMBLE CUPS</h1>
+  <div class="subtitle">ELITE COMMUNITY TIER LIST • Drag & Drop • Auto Save</div>
+ 
+  <div class="topbar">
+    <button class="owner-btn" id="ownerBtn">🔒 Owner Area</button>
+    <button class="add-btn" id="addBtn">➕ Add Player</button>
+  </div>
+</header>
+ 
+<div class="container">
+ 
+  <div class="tier">
+    <div class="label S">
+      <div class="letter">S</div>
+      <div class="name">Best Players</div>
+      <div class="count" data-count="S">0</div>
+    </div>
+    <div class="dropzone" data-tier="S"></div>
+  </div>
+ 
+  <div class="tier">
+    <div class="label A">
+      <div class="letter">A</div>
+      <div class="name">Strong</div>
+      <div class="count" data-count="A">0</div>
+    </div>
+    <div class="dropzone" data-tier="A"></div>
+  </div>
+ 
+  <div class="tier">
+    <div class="label B">
+      <div class="letter">B</div>
+      <div class="name">Solid</div>
+      <div class="count" data-count="B">0</div>
+    </div>
+    <div class="dropzone" data-tier="B"></div>
+  </div>
+ 
+  <div class="tier">
+    <div class="label C">
+      <div class="letter">C</div>
+      <div class="name">Average</div>
+      <div class="count" data-count="C">0</div>
+    </div>
+    <div class="dropzone" data-tier="C"></div>
+  </div>
+ 
+  <div class="tier">
+    <div class="label D">
+      <div class="letter">D</div>
+      <div class="name">Learning</div>
+      <div class="count" data-count="D">0</div>
+    </div>
+    <div class="dropzone" data-tier="D"></div>
+  </div>
+ 
+</div>
+ 
+<!-- Login modal -->
+<div class="modal" id="loginModal">
+  <div class="card">
+    <h2>🔐 Owner Access</h2>
+    <p>Entre le mot de passe pour modifier la tier list.</p>
+    <input type="password" id="passwordInput" placeholder="Entrer password" />
+    <div class="actions">
+      <button class="secondary" id="cancelLogin">Annuler</button>
+      <button class="primary" id="loginBtn">Entrer</button>
+    </div>
+    <div class="hint">Le mot de passe est vérifié côté serveur, pas dans le navigateur.</div>
+  </div>
+</div>
+ 
+<!-- Add player modal -->
+<div class="modal" id="addModal">
+  <div class="card">
+    <h2>➕ Add Player</h2>
+    <input type="text" id="playerName" placeholder="Player name" />
+    <input type="text" id="playerTag" placeholder="Clan / tag (optionnel)" />
+    <select id="playerTier">
+      <option value="S">S • Best Players</option>
+      <option value="A">A • Strong</option>
+      <option value="B">B • Solid</option>
+      <option value="C">C • Average</option>
+      <option value="D">D • Learning</option>
+    </select>
+    <div class="actions">
+      <button class="secondary" id="cancelAdd">Annuler</button>
+      <button class="primary" id="savePlayer">Ajouter</button>
+    </div>
+  </div>
+</div>
+ 
+<script>
+  let owner = false;
+  let ownerToken = null;
+  let dragged = null;
+ 
+  const zones = document.querySelectorAll(".dropzone");
+ 
+  function updateCounts(){
+    zones.forEach(z => {
+      const el = document.querySelector(`[data-count="${z.dataset.tier}"]`);
+      if(el) el.textContent = z.children.length;
+    });
+  }
+ 
+  function makePlayer(name, tag = ""){
+    const div = document.createElement("div");
+    div.className = "player";
+    div.draggable = owner;
+    div.innerHTML = `
+      <div class="avatar">${name.charAt(0).toUpperCase()}</div>
+      <div class="pname"></div>
+      <div class="tag"></div>
+    `;
+    // textContent (et non innerHTML) pour éviter toute injection HTML
+    div.querySelector(".pname").textContent = name;
+    div.querySelector(".tag").textContent = tag || "";
+ 
+    div.addEventListener("dragstart", () => {
+      if(!owner) return;
+      dragged = div;
+      div.classList.add("dragging");
+    });
+ 
+    div.addEventListener("dragend", () => {
+      div.classList.remove("dragging");
+      dragged = null;
+      updateCounts();
+      save();
+    });
+ 
+    return div;
+  }
+ 
+  zones.forEach(zone => {
+    zone.addEventListener("dragover", e => {
+      if(!owner) return;
+      e.preventDefault();
+      zone.classList.add("dragover");
+    });
+ 
+    zone.addEventListener("dragleave", () => {
+      zone.classList.remove("dragover");
+    });
+ 
+    zone.addEventListener("drop", e => {
+      if(!owner) return;
+      e.preventDefault();
+      zone.classList.remove("dragover");
+      if(dragged) zone.appendChild(dragged);
+      updateCounts();
+    });
+  });
+ 
+  // --- Sauvegarde / chargement via le serveur ---
+ 
+  async function save(){
+    if(!owner || !ownerToken) return;
+ 
+    const data = {};
+    zones.forEach(z => {
+      data[z.dataset.tier] = [...z.children].map(p => ({
+        name: p.querySelector('.pname').textContent,
+        tag: p.querySelector('.tag').textContent
+      }));
+    });
+ 
+    try {
+      const res = await fetch("/api/tierlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + ownerToken
+        },
+        body: JSON.stringify(data)
+      });
+      if(!res.ok){
+        console.error("Échec de la sauvegarde", await res.text());
+      }
+    } catch(err){
+      console.error("Erreur réseau lors de la sauvegarde", err);
+    }
+  }
+ 
+  async function load(){
+    try {
+      const res = await fetch("/api/tierlist");
+      const data = await res.json();
+ 
+      zones.forEach(z => z.innerHTML = "");
+ 
+      Object.entries(data).forEach(([tier, players]) => {
+        const zone = document.querySelector(`[data-tier="${tier}"]`);
+        if(!zone) return;
+        players.forEach(p => zone.appendChild(makePlayer(p.name, p.tag)));
+      });
+ 
+      updateCounts();
+    } catch(err){
+      console.error("Impossible de charger la tier list", err);
+    }
+  }
+ 
+  // Owner login
+  const loginModal = document.getElementById("loginModal");
+ 
+  document.getElementById("ownerBtn").onclick = () => {
+    loginModal.classList.add("show");
+    document.getElementById("passwordInput").focus();
+  };
+ 
+  document.getElementById("cancelLogin").onclick = () => {
+    loginModal.classList.remove("show");
+  };
+ 
+  document.getElementById("loginBtn").onclick = async () => {
+    const value = document.getElementById("passwordInput").value;
+    const loginBtn = document.getElementById("loginBtn");
+    loginBtn.disabled = true;
+ 
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: value })
+      });
+ 
+      if(res.ok){
+        const { token } = await res.json();
+        ownerToken = token;
+        owner = true;
+ 
+        loginModal.classList.remove("show");
+        document.getElementById("addBtn").classList.add("show");
+        document.querySelectorAll('.player').forEach(p => p.draggable = true);
+        document.getElementById("passwordInput").value = "";
+ 
+        alert("Owner mode activé 👑");
+      } else {
+        alert("Mot de passe incorrect");
+      }
+    } catch(err){
+      alert("Erreur de connexion au serveur");
+    } finally {
+      loginBtn.disabled = false;
+    }
+  };
+ 
+  // Add player
+  const addModal = document.getElementById("addModal");
+ 
+  document.getElementById("addBtn").onclick = () => {
+    addModal.classList.add("show");
+  };
+ 
+  document.getElementById("cancelAdd").onclick = () => {
+    addModal.classList.remove("show");
+  };
+ 
+  document.getElementById("savePlayer").onclick = () => {
+    const name = document.getElementById("playerName").value.trim();
+    const tag = document.getElementById("playerTag").value.trim();
+    const tier = document.getElementById("playerTier").value;
+ 
+    if(!name) return;
+ 
+    document.querySelector(`[data-tier="${tier}"]`)
+      .appendChild(makePlayer(name, tag));
+ 
+    updateCounts();
+    save();
+ 
+    document.getElementById("playerName").value = "";
+    document.getElementById("playerTag").value = "";
+    addModal.classList.remove("show");
+  };
+ 
+  load();
+</script>
+</body>
+</html>
+ 
