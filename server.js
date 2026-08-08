@@ -56,14 +56,11 @@ app.get("/api/tierlist", (req, res) => {
 // Connexion owner : vérifie le mot de passe côté serveur
 app.post("/api/login", (req, res) => {
   const { password } = req.body || {};
-
   if (typeof password !== "string" || password !== OWNER_PASSWORD) {
     return res.status(401).json({ error: "Mot de passe incorrect" });
   }
-
   const token = crypto.randomBytes(24).toString("hex");
   sessions.set(token, Date.now() + SESSION_DURATION_MS);
-
   res.json({ token, expiresInMs: SESSION_DURATION_MS });
 });
 
@@ -85,6 +82,10 @@ app.post("/api/tierlist", (req, res) => {
   const tiers = ["S", "A", "B", "C", "D"];
   const clean = defaultData();
 
+  // Un ID Discord valide est un "snowflake" : uniquement des chiffres,
+  // entre 17 et 20 caractères.
+  const isValidDiscordId = (id) => /^\d{17,20}$/.test(id);
+
   for (const t of tiers) {
     if (Array.isArray(incoming?.[t])) {
       clean[t] = incoming[t]
@@ -96,9 +97,13 @@ app.post("/api/tierlist", (req, res) => {
           const isValidImage =
             /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(rawImage) &&
             rawImage.length <= 2_000_000;
+
+          const rawDiscordId = String(p.discordId || "").trim();
+
           return {
             name: String(p.name).slice(0, 40),
-            image: isValidImage ? rawImage : ""
+            image: isValidImage ? rawImage : "",
+            discordId: isValidDiscordId(rawDiscordId) ? rawDiscordId : ""
           };
         });
     }
