@@ -963,6 +963,7 @@
 
 <!-- Right-click context menu (owner only) -->
 <div class="ctx-menu" id="ctxMenu">
+  <button class="ctx-item" id="ctxDiscord"><span class="ctx-icon">🔗</span> View Discord profile</button>
   <button class="ctx-item danger" id="ctxDelete"><span class="ctx-icon">🗑️</span> Delete player</button>
 </div>
 
@@ -987,12 +988,9 @@
     <h2>➕ Add Player</h2>
     <label class="field-label">Player name</label>
     <input type="text" id="playerName" placeholder="e.g. Warden" />
-    <label class="field-label">Player image (optional)</label>
-    <div class="upload-box" id="uploadBox">
-      <img id="uploadPreviewImg" alt="" />
-      <span id="uploadPlaceholder">📷 Click to choose a photo</span>
-    </div>
-    <input type="file" id="playerImageFile" accept="image/*" style="display:none" />
+    <label class="field-label">Discord ID (optional)</label>
+    <input type="text" id="playerDiscordId" placeholder="e.g. 123456789012345678" inputmode="numeric" />
+    <div class="hint" id="discordHint" style="text-align:left;margin-top:-10px;margin-bottom:14px;">Avatar is fetched once from their Discord profile and stays fixed.</div>
     <label class="field-label">Tier</label>
     <select id="playerTier">
       <option value="S">S • Best Players</option>
@@ -1028,9 +1026,10 @@
   const zones = document.querySelectorAll(".dropzone");
   const tierRows = document.querySelectorAll(".tier");
 
-  function makePlayer(name, image = ""){
+  function makePlayer(name, image = "", discordId = ""){
     const div = document.createElement("div");
     div.className = "player";
+    if(discordId) div.dataset.discordId = discordId;
 
     const avatar = document.createElement("div");
     avatar.className = "avatar";
@@ -1057,6 +1056,34 @@
     div.addEventListener("contextmenu", e => openContextMenu(e, div));
 
     return div;
+  }
+
+  // Fetches a Discord avatar once (via a public avatar-mirror, no bot token needed)
+  // and bakes it into a fixed data URL so it never changes again afterward.
+  function fetchDiscordAvatarSnapshot(discordId){
+    const mirrorUrl = `https://dcdn.dstn.to/avatars/${encodeURIComponent(discordId)}`;
+    return new Promise(resolve => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        try {
+          const maxSize = 320;
+          let w = img.width, h = img.height;
+          if(w > h && w > maxSize){ h = Math.round(h * maxSize / w); w = maxSize; }
+          else if(h >= w && h > maxSize){ w = Math.round(w * maxSize / h); h = maxSize; }
+          const canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", 0.85));
+        } catch(err){
+          // Canvas got tainted (mirror didn't send CORS headers) — fall back
+          // to referencing the mirror URL directly instead of a frozen snapshot.
+          resolve(mirrorUrl);
+        }
+      };
+      img.onerror = () => resolve(""); // invalid ID / no avatar found
+      img.src = mirrorUrl;
+    });
   }
 
   // --- Drag & drop (pointer-based: works with mouse AND touch, across tiers) ---
@@ -1159,8 +1186,11 @@
     applyFilters();
   }
 
-  // --- Right-click context menu (delete player) ---
+  // --- Right-click context menu ---
+  // "View Discord profile" is available to everyone (owner or not).
+  // "Delete player" only shows up for the owner.
   const ctxMenu = document.getElementById("ctxMenu");
+  const ctxDiscordBtn = document.getElementById("ctxDiscord");
   const ctxDeleteBtn = document.getElementById("ctxDelete");
   const deleteModal = document.getElementById("deleteModal");
   const deleteTargetName = document.getElementById("deleteTargetName");
@@ -1168,17 +1198,23 @@
   let deleteTarget = null;
 
   function openContextMenu(e, playerEl){
-    if(!owner) return; // right-click menu only for the owner
-    e.preventDefault();
+    const hasDiscord = !!playerEl.dataset.discordId;
+    const canDelete = owner;
 
+    if(!hasDiscord && !canDelete) return; // nothing to show — let the native menu appear
+
+    e.preventDefault();
     closeContextMenu();
     ctxTarget = playerEl;
     playerEl.classList.add("ctx-active");
 
+    ctxDiscordBtn.style.display = hasDiscord ? "flex" : "none";
+    ctxDeleteBtn.style.display = canDelete ? "flex" : "none";
+
     ctxMenu.classList.add("show");
 
     // Position within viewport bounds
-    const menuW = 200, menuH = 50;
+    const menuW = 210, menuH = hasDiscord && canDelete ? 96 : 50;
     let x = e.clientX, y = e.clientY;
     if(x + menuW > window.innerWidth) x = window.innerWidth - menuW - 10;
     if(y + menuH > window.innerHeight) y = window.innerHeight - menuH - 10;
@@ -1199,6 +1235,12 @@
   window.addEventListener("blur", closeContextMenu);
   document.addEventListener("keydown", (e) => {
     if(e.key === "Escape") closeContextMenu();
+  });
+
+  ctxDiscordBtn.addEventListener("click", () => {
+    if(!ctxTarget || !ctxTarget.dataset.discordId) return;
+    window.open(`https://discord.com/users/${ctxTarget.dataset.discordId}`, "_blank", "noopener");
+    closeContextMenu();
   });
 
   ctxDeleteBtn.addEventListener("click", () => {
@@ -1233,7 +1275,8 @@
     zones.forEach(z => {
       data[z.dataset.tier] = [...z.children].map(p => ({
         name: p.querySelector('.pname').textContent,
-        image: p.querySelector('.avatar img')?.getAttribute('src') || ""
+        image: p.querySelector('.avatar img')?.getAttribute('src') || "",
+        discordId: p.dataset.discordId || ""
       }));
     });
 
@@ -1264,7 +1307,7 @@
       Object.entries(data).forEach(([tier, players]) => {
         const zone = document.querySelector(`[data-tier="${tier}"]`);
         if(!zone) return;
-        players.forEach(p => zone.appendChild(makePlayer(p.name, p.image)));
+        players.forEach(p => zone.appendChild(makePlayer(p.name, p.image, p.discordId)));
       });
 
       updateAll();
@@ -1374,47 +1417,15 @@
 
   // Add player
   const addModal = document.getElementById("addModal");
-  const uploadBox = document.getElementById("uploadBox");
-  const uploadPreviewImg = document.getElementById("uploadPreviewImg");
-  const playerImageFile = document.getElementById("playerImageFile");
-  let selectedImageData = "";
+  const discordIdInput = document.getElementById("playerDiscordId");
+  const discordHint = document.getElementById("discordHint");
+  const defaultDiscordHint = discordHint.textContent;
 
-  function resetImagePicker(){
-    selectedImageData = "";
-    uploadPreviewImg.src = "";
-    uploadBox.classList.remove("has-image");
-    playerImageFile.value = "";
+  function resetAddForm(){
+    discordIdInput.value = "";
+    discordHint.textContent = defaultDiscordHint;
+    discordHint.style.color = "";
   }
-
-  uploadBox.addEventListener("click", () => playerImageFile.click());
-
-  playerImageFile.addEventListener("change", () => {
-    const file = playerImageFile.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        // Resize/compress client-side so the tier list stays light
-        const maxSize = 320;
-        let w = img.width, h = img.height;
-        if(w > h && w > maxSize){ h = Math.round(h * maxSize / w); w = maxSize; }
-        else if(h >= w && h > maxSize){ w = Math.round(w * maxSize / h); h = maxSize; }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-
-        selectedImageData = canvas.toDataURL("image/jpeg", 0.82);
-        uploadPreviewImg.src = selectedImageData;
-        uploadBox.classList.add("has-image");
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
 
   document.getElementById("addBtn").onclick = () => {
     addModal.classList.add("show");
@@ -1422,23 +1433,39 @@
 
   document.getElementById("cancelAdd").onclick = () => {
     addModal.classList.remove("show");
-    resetImagePicker();
+    resetAddForm();
   };
 
-  document.getElementById("savePlayer").onclick = () => {
+  document.getElementById("savePlayer").onclick = async () => {
     const name = document.getElementById("playerName").value.trim();
     const tier = document.getElementById("playerTier").value;
+    const discordId = discordIdInput.value.trim();
 
     if(!name) return;
 
+    const saveBtn = document.getElementById("savePlayer");
+    saveBtn.disabled = true;
+
+    let imageData = "";
+    if(discordId){
+      discordHint.textContent = "Fetching avatar...";
+      discordHint.style.color = "";
+      imageData = await fetchDiscordAvatarSnapshot(discordId);
+      if(!imageData){
+        discordHint.textContent = "Could not find that Discord avatar — adding with initials instead.";
+        discordHint.style.color = "var(--danger)";
+      }
+    }
+
     document.querySelector(`[data-tier="${tier}"]`)
-      .appendChild(makePlayer(name, selectedImageData));
+      .appendChild(makePlayer(name, imageData, discordId));
 
     updateAll();
     save();
 
     document.getElementById("playerName").value = "";
-    resetImagePicker();
+    saveBtn.disabled = false;
+    resetAddForm();
     addModal.classList.remove("show");
   };
 
