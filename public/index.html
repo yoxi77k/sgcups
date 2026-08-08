@@ -991,9 +991,12 @@
     <label class="field-label">Discord ID (optional)</label>
     <input type="text" id="playerDiscordId" placeholder="e.g. 123456789012345678" inputmode="numeric" />
     <div class="hint" id="discordIdHint" style="text-align:left;margin-top:-10px;margin-bottom:14px;">Used for the right-click "View Discord profile" link.</div>
-    <label class="field-label">Avatar image URL (optional)</label>
-    <input type="text" id="playerAvatarUrl" placeholder="https://cdn.discordapp.com/avatars/..." />
-    <div class="hint" id="avatarUrlHint" style="text-align:left;margin-top:-10px;margin-bottom:14px;">In Discord, right-click their profile picture → "Copy Image Address", then paste it here. It stays fixed to this photo — if they change their PFP later, this one won't update.</div>
+    <label class="field-label">Player image (optional)</label>
+    <div class="upload-box" id="uploadBox">
+      <img id="uploadPreviewImg" alt="" />
+      <span id="uploadPlaceholder">📷 Click to choose a photo</span>
+    </div>
+    <input type="file" id="playerImageFile" accept="image/*" style="display:none" />
     <label class="field-label">Tier</label>
     <select id="playerTier">
       <option value="S">S • Best Players</option>
@@ -1399,16 +1402,49 @@
   // Add player
   const addModal = document.getElementById("addModal");
   const discordIdInput = document.getElementById("playerDiscordId");
-  const avatarUrlInput = document.getElementById("playerAvatarUrl");
-  const avatarUrlHint = document.getElementById("avatarUrlHint");
-  const defaultAvatarUrlHint = avatarUrlHint.textContent;
+  const uploadBox = document.getElementById("uploadBox");
+  const uploadPreviewImg = document.getElementById("uploadPreviewImg");
+  const playerImageFile = document.getElementById("playerImageFile");
+  let selectedImageData = "";
 
   function resetAddForm(){
     discordIdInput.value = "";
-    avatarUrlInput.value = "";
-    avatarUrlHint.textContent = defaultAvatarUrlHint;
-    avatarUrlHint.style.color = "";
+    selectedImageData = "";
+    uploadPreviewImg.src = "";
+    uploadBox.classList.remove("has-image");
+    playerImageFile.value = "";
   }
+
+  uploadBox.addEventListener("click", () => playerImageFile.click());
+
+  playerImageFile.addEventListener("change", () => {
+    const file = playerImageFile.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Resize/compress client-side so the tier list stays light
+        // and fits the server's base64-image size limit.
+        const maxSize = 320;
+        let w = img.width, h = img.height;
+        if(w > h && w > maxSize){ h = Math.round(h * maxSize / w); w = maxSize; }
+        else if(h >= w && h > maxSize){ w = Math.round(w * maxSize / h); h = maxSize; }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+
+        selectedImageData = canvas.toDataURL("image/jpeg", 0.82);
+        uploadPreviewImg.src = selectedImageData;
+        uploadBox.classList.add("has-image");
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 
   document.getElementById("addBtn").onclick = () => {
     addModal.classList.add("show");
@@ -1423,27 +1459,11 @@
     const name = document.getElementById("playerName").value.trim();
     const tier = document.getElementById("playerTier").value;
     const discordId = discordIdInput.value.trim();
-    let avatarUrl = avatarUrlInput.value.trim();
 
     if(!name) return;
 
-    if(avatarUrl){
-      let looksValid = false;
-      try {
-        const u = new URL(avatarUrl);
-        looksValid = u.protocol === "https:";
-      } catch(err){
-        looksValid = false;
-      }
-      if(!looksValid){
-        avatarUrlHint.textContent = "That doesn't look like a valid image URL — adding with initials instead.";
-        avatarUrlHint.style.color = "var(--danger)";
-        avatarUrl = "";
-      }
-    }
-
     document.querySelector(`[data-tier="${tier}"]`)
-      .appendChild(makePlayer(name, avatarUrl, discordId));
+      .appendChild(makePlayer(name, selectedImageData, discordId));
 
     updateAll();
     save();
