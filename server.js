@@ -14,7 +14,7 @@ const DATA_FILE = path.join(__dirname, "data.json");
 
 // Sessions "owner" en mémoire : token -> date d'expiration
 const sessions = new Map();
-const SESSION_DURATION_MS = 2 * 60 * 60 * 1000; // 2 heures
+const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
 
 app.use(express.json({ limit: "8mb" }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -65,6 +65,14 @@ app.post("/api/login", (req, res) => {
   sessions.set(token, Date.now() + SESSION_DURATION_MS);
 
   res.json({ token, expiresInMs: SESSION_DURATION_MS });
+});
+
+// Vérifier si un token owner stocké côté client est toujours valide
+app.get("/api/verify", (req, res) => {
+  if (!isAuthorized(req)) {
+    return res.status(401).json({ ok: false });
+  }
+  res.json({ ok: true });
 });
 
 // Sauvegarder la tier list (protégé : token owner obligatoire)
