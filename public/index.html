@@ -551,10 +551,15 @@
     border-radius:16px;
     padding:10px;
     text-align:center;
-    cursor:grab;
+    cursor:default;
     user-select:none;
     position:relative;
     transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, width .25s ease;
+  }
+
+  body.is-owner .player{
+    cursor:grab;
+    touch-action:none;
   }
 
   .player:hover{
@@ -567,8 +572,17 @@
     transform:scale(1.05) rotate(-1.5deg);
   }
 
-  .player.dragging{ opacity:.5; transform:scale(.97); cursor:grabbing; }
+  .player.dragging{ opacity:.35; }
   .player.hidden{ display:none; }
+
+  .drag-clone{
+    position:fixed;
+    z-index:999;
+    pointer-events:none;
+    transform:scale(1.06) rotate(-3deg);
+    box-shadow:0 20px 45px rgba(51,224,232,.4);
+    cursor:grabbing;
+  }
 
   [data-tier="S"] .player:first-child::before{
     content:"👑";
@@ -605,6 +619,8 @@
     width:100%; height:100%;
     object-fit:cover;
     position:absolute; inset:0;
+    -webkit-user-drag:none;
+    -webkit-touch-callout:none;
   }
 
   .player .pname{
@@ -927,7 +943,6 @@
 <script>
   let owner = false;
   let ownerToken = null;
-  let dragged = null;
   let activeFilter = "ALL";
 
   const zones = document.querySelectorAll(".dropzone");
@@ -936,7 +951,6 @@
   function makePlayer(name, image = ""){
     const div = document.createElement("div");
     div.className = "player";
-    div.draggable = owner;
 
     const avatar = document.createElement("div");
     avatar.className = "avatar";
@@ -947,6 +961,7 @@
       img.src = image;
       img.alt = "";
       img.loading = "lazy";
+      img.draggable = false;
       img.onerror = () => img.remove();
       avatar.appendChild(img);
     }
@@ -958,41 +973,76 @@
     div.appendChild(avatar);
     div.appendChild(pname);
 
-    div.addEventListener("dragstart", () => {
-      if(!owner) return;
-      dragged = div;
-      div.classList.add("dragging");
-    });
-
-    div.addEventListener("dragend", () => {
-      div.classList.remove("dragging");
-      dragged = null;
-      updateAll();
-      save();
-    });
+    div.addEventListener("pointerdown", e => startDrag(e, div));
 
     return div;
   }
 
-  zones.forEach(zone => {
-    zone.addEventListener("dragover", e => {
-      if(!owner) return;
-      e.preventDefault();
-      zone.classList.add("dragover");
-    });
+  // --- Drag & drop (pointer-based: works with mouse AND touch, across tiers) ---
+  let activeDrag = null;
 
-    zone.addEventListener("dragleave", () => {
-      zone.classList.remove("dragover");
-    });
+  function startDrag(e, el){
+    if(!owner) return;
+    if(e.pointerType === "mouse" && e.button !== 0) return;
 
-    zone.addEventListener("drop", e => {
-      if(!owner) return;
-      e.preventDefault();
-      zone.classList.remove("dragover");
-      if(dragged) zone.appendChild(dragged);
-      updateAll();
-    });
-  });
+    e.preventDefault();
+
+    const rect = el.getBoundingClientRect();
+    const clone = el.cloneNode(true);
+    clone.classList.add("drag-clone");
+    clone.style.width = rect.width + "px";
+    clone.style.height = rect.height + "px";
+    clone.style.left = rect.left + "px";
+    clone.style.top = rect.top + "px";
+    document.body.appendChild(clone);
+
+    el.classList.add("dragging");
+    document.body.style.userSelect = "none";
+
+    activeDrag = {
+      el, clone,
+      offsetX: e.clientX - rect.left,
+      offsetY: e.clientY - rect.top
+    };
+
+    document.addEventListener("pointermove", onDragMove);
+    document.addEventListener("pointerup", onDragEnd);
+    document.addEventListener("pointercancel", onDragEnd);
+  }
+
+  function onDragMove(e){
+    if(!activeDrag) return;
+    const { clone, offsetX, offsetY } = activeDrag;
+    clone.style.left = (e.clientX - offsetX) + "px";
+    clone.style.top = (e.clientY - offsetY) + "px";
+
+    zones.forEach(z => z.classList.remove("dragover"));
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    const zone = target?.closest(".dropzone");
+    if(zone) zone.classList.add("dragover");
+  }
+
+  function onDragEnd(e){
+    if(!activeDrag) return;
+    const { el, clone } = activeDrag;
+
+    zones.forEach(z => z.classList.remove("dragover"));
+    const target = document.elementFromPoint(e.clientX, e.clientY);
+    const zone = target?.closest(".dropzone");
+    if(zone) zone.appendChild(el);
+
+    el.classList.remove("dragging");
+    clone.remove();
+    document.body.style.userSelect = "";
+    activeDrag = null;
+
+    document.removeEventListener("pointermove", onDragMove);
+    document.removeEventListener("pointerup", onDragEnd);
+    document.removeEventListener("pointercancel", onDragEnd);
+
+    updateAll();
+    save();
+  }
 
   function updateCounts(){
     let total = 0;
@@ -1100,8 +1150,43 @@
 
   // Owner login
   const loginModal = document.getElementById("loginModal");
+  const ownerBtnEl = document.getElementById("ownerBtn");
 
-  document.getElementById("ownerBtn").onclick = () => {
+  function setOwnerUI(isOwner){
+    owner = isOwner;
+    document.body.classList.toggle("is-owner", isOwner);
+    document.getElementById("addBtn").classList.toggle("show", isOwner);
+    ownerBtnEl.innerHTML = isOwner
+      ? '<span class="crown">👑</span> Log out'
+      : '<span class="crown">👑</span> Owner Area';
+  }
+
+  async function restoreOwnerSession(){
+    const stored = localStorage.getItem("ownerToken");
+    if(!stored) return;
+
+    try {
+      const res = await fetch("/api/verify", {
+        headers: { "Authorization": "Bearer " + stored }
+      });
+      if(res.ok){
+        ownerToken = stored;
+        setOwnerUI(true);
+      } else {
+        localStorage.removeItem("ownerToken");
+      }
+    } catch(err){
+      // Server unreachable — leave the stored token as-is, try again next load.
+    }
+  }
+
+  ownerBtnEl.onclick = () => {
+    if(owner){
+      ownerToken = null;
+      localStorage.removeItem("ownerToken");
+      setOwnerUI(false);
+      return;
+    }
     loginModal.classList.add("show");
     document.getElementById("passwordInput").focus();
   };
@@ -1125,11 +1210,10 @@
       if(res.ok){
         const { token } = await res.json();
         ownerToken = token;
-        owner = true;
+        localStorage.setItem("ownerToken", token);
+        setOwnerUI(true);
 
         loginModal.classList.remove("show");
-        document.getElementById("addBtn").classList.add("show");
-        document.querySelectorAll('.player').forEach(p => p.draggable = true);
         document.getElementById("passwordInput").value = "";
       } else {
         alert("Incorrect password");
@@ -1212,6 +1296,7 @@
   };
 
   load();
+  restoreOwnerSession();
 </script>
 </body>
 </html>
