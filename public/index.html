@@ -990,7 +990,10 @@
     <input type="text" id="playerName" placeholder="e.g. Warden" />
     <label class="field-label">Discord ID (optional)</label>
     <input type="text" id="playerDiscordId" placeholder="e.g. 123456789012345678" inputmode="numeric" />
-    <div class="hint" id="discordHint" style="text-align:left;margin-top:-10px;margin-bottom:14px;">Avatar is fetched once from their Discord profile and stays fixed.</div>
+    <div class="hint" id="discordIdHint" style="text-align:left;margin-top:-10px;margin-bottom:14px;">Used for the right-click "View Discord profile" link.</div>
+    <label class="field-label">Avatar image URL (optional)</label>
+    <input type="text" id="playerAvatarUrl" placeholder="https://cdn.discordapp.com/avatars/..." />
+    <div class="hint" id="avatarUrlHint" style="text-align:left;margin-top:-10px;margin-bottom:14px;">In Discord, right-click their profile picture → "Copy Image Address", then paste it here. It stays fixed to this photo — if they change their PFP later, this one won't update.</div>
     <label class="field-label">Tier</label>
     <select id="playerTier">
       <option value="S">S • Best Players</option>
@@ -1058,33 +1061,11 @@
     return div;
   }
 
-  // Fetches a Discord avatar once (via a public avatar-mirror, no bot token needed)
-  // and bakes it into a fixed data URL so it never changes again afterward.
-  function fetchDiscordAvatarSnapshot(discordId){
-    const mirrorUrl = `https://dcdn.dstn.to/avatars/${encodeURIComponent(discordId)}`;
-    return new Promise(resolve => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.onload = () => {
-        try {
-          const maxSize = 320;
-          let w = img.width, h = img.height;
-          if(w > h && w > maxSize){ h = Math.round(h * maxSize / w); w = maxSize; }
-          else if(h >= w && h > maxSize){ w = Math.round(w * maxSize / h); h = maxSize; }
-          const canvas = document.createElement("canvas");
-          canvas.width = w; canvas.height = h;
-          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-          resolve(canvas.toDataURL("image/jpeg", 0.85));
-        } catch(err){
-          // Canvas got tainted (mirror didn't send CORS headers) — fall back
-          // to referencing the mirror URL directly instead of a frozen snapshot.
-          resolve(mirrorUrl);
-        }
-      };
-      img.onerror = () => resolve(""); // invalid ID / no avatar found
-      img.src = mirrorUrl;
-    });
-  }
+  // Note: an avatar image is only ever set from a URL the owner pastes in
+  // (see the Add Player form). There is no reliable way to auto-fetch an
+  // arbitrary Discord user's avatar from just their ID without a private
+  // bot token running on a real backend — anything claiming otherwise from
+  // pure client-side JS is not trustworthy long-term.
 
   // --- Drag & drop (pointer-based: works with mouse AND touch, across tiers) ---
   let activeDrag = null;
@@ -1418,13 +1399,15 @@
   // Add player
   const addModal = document.getElementById("addModal");
   const discordIdInput = document.getElementById("playerDiscordId");
-  const discordHint = document.getElementById("discordHint");
-  const defaultDiscordHint = discordHint.textContent;
+  const avatarUrlInput = document.getElementById("playerAvatarUrl");
+  const avatarUrlHint = document.getElementById("avatarUrlHint");
+  const defaultAvatarUrlHint = avatarUrlHint.textContent;
 
   function resetAddForm(){
     discordIdInput.value = "";
-    discordHint.textContent = defaultDiscordHint;
-    discordHint.style.color = "";
+    avatarUrlInput.value = "";
+    avatarUrlHint.textContent = defaultAvatarUrlHint;
+    avatarUrlHint.style.color = "";
   }
 
   document.getElementById("addBtn").onclick = () => {
@@ -1436,35 +1419,36 @@
     resetAddForm();
   };
 
-  document.getElementById("savePlayer").onclick = async () => {
+  document.getElementById("savePlayer").onclick = () => {
     const name = document.getElementById("playerName").value.trim();
     const tier = document.getElementById("playerTier").value;
     const discordId = discordIdInput.value.trim();
+    let avatarUrl = avatarUrlInput.value.trim();
 
     if(!name) return;
 
-    const saveBtn = document.getElementById("savePlayer");
-    saveBtn.disabled = true;
-
-    let imageData = "";
-    if(discordId){
-      discordHint.textContent = "Fetching avatar...";
-      discordHint.style.color = "";
-      imageData = await fetchDiscordAvatarSnapshot(discordId);
-      if(!imageData){
-        discordHint.textContent = "Could not find that Discord avatar — adding with initials instead.";
-        discordHint.style.color = "var(--danger)";
+    if(avatarUrl){
+      let looksValid = false;
+      try {
+        const u = new URL(avatarUrl);
+        looksValid = u.protocol === "https:";
+      } catch(err){
+        looksValid = false;
+      }
+      if(!looksValid){
+        avatarUrlHint.textContent = "That doesn't look like a valid image URL — adding with initials instead.";
+        avatarUrlHint.style.color = "var(--danger)";
+        avatarUrl = "";
       }
     }
 
     document.querySelector(`[data-tier="${tier}"]`)
-      .appendChild(makePlayer(name, imageData, discordId));
+      .appendChild(makePlayer(name, avatarUrl, discordId));
 
     updateAll();
     save();
 
     document.getElementById("playerName").value = "";
-    saveBtn.disabled = false;
     resetAddForm();
     addModal.classList.remove("show");
   };
