@@ -16,7 +16,7 @@ const DATA_FILE = path.join(__dirname, "data.json");
 const sessions = new Map();
 const SESSION_DURATION_MS = 2 * 60 * 60 * 1000; // 2 heures
 
-app.use(express.json());
+app.use(express.json({ limit: "8mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 function defaultData() {
@@ -81,10 +81,18 @@ app.post("/api/tierlist", (req, res) => {
     if (Array.isArray(incoming?.[t])) {
       clean[t] = incoming[t]
         .filter(p => p && typeof p.name === "string" && p.name.trim())
-        .map(p => ({
-          name: String(p.name).slice(0, 40),
-          tag: String(p.tag || "").slice(0, 40)
-        }));
+        .map(p => {
+          const rawImage = String(p.image || "").trim();
+          // On accepte uniquement des images envoyées en base64 (upload direct),
+          // avec une taille plafonnée pour ne pas surcharger le stockage.
+          const isValidImage =
+            /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(rawImage) &&
+            rawImage.length <= 2_000_000;
+          return {
+            name: String(p.name).slice(0, 40),
+            image: isValidImage ? rawImage : ""
+          };
+        });
     }
   }
 
