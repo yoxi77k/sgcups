@@ -476,49 +476,47 @@
     text-align:center;
     display:flex;
     flex-direction:column;
+    align-items:center;
     justify-content:center;
     min-height:130px;
-    position:relative;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.12);
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    backdrop-filter:blur(12px);
   }
 
-  .label::after{
-    content:"";
-    position:absolute; inset:0;
-    background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.16), transparent 60%);
-  }
-
-  .label .letter{
+  .letter-badge{
+    width:56px;
+    height:56px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-family:'Orbitron',sans-serif;
     font-weight:900;
-    font-size:2rem;
-    line-height:1;
-    position:relative;
+    font-size:1.5rem;
+    margin-bottom:10px;
+    flex-shrink:0;
   }
 
+  .letter-badge.S{ background:linear-gradient(160deg,var(--s-1),var(--s-2)); color:#3a1400; box-shadow:0 0 22px rgba(255,138,0,.4); }
+  .letter-badge.A{ background:linear-gradient(160deg,var(--a-1),var(--a-2)); color:#fff; box-shadow:0 0 22px rgba(194,45,85,.4); }
+  .letter-badge.B{ background:linear-gradient(160deg,var(--b-1),var(--b-2)); color:#fff; box-shadow:0 0 22px rgba(91,47,214,.4); }
+  .letter-badge.C{ background:linear-gradient(160deg,var(--c-1),var(--c-2)); color:#052226; box-shadow:0 0 22px rgba(13,142,163,.4); }
+  .letter-badge.D{ background:linear-gradient(160deg,var(--d-1),var(--d-2)); color:#fff; box-shadow:0 0 22px rgba(69,76,102,.4); }
+
   .label .name{
-    margin-top:6px;
     font-size:.85rem;
     font-weight:700;
-    opacity:.95;
-    position:relative;
+    color:var(--text-0);
   }
 
   .label .count{
-    margin-top:10px;
+    margin-top:6px;
     font-size:.7rem;
     letter-spacing:1px;
-    opacity:.85;
+    color:var(--text-2);
     font-weight:700;
-    position:relative;
   }
-
-  .S{ background:linear-gradient(160deg,var(--s-1),var(--s-2)); box-shadow:0 8px 30px rgba(255,138,0,.18); color:#3a1400; }
-  .A{ background:linear-gradient(160deg,var(--a-1),var(--a-2)); box-shadow:0 8px 30px rgba(194,45,85,.2); color:#fff; }
-  .B{ background:linear-gradient(160deg,var(--b-1),var(--b-2)); box-shadow:0 8px 30px rgba(91,47,214,.22); color:#fff; }
-  .C{ background:linear-gradient(160deg,var(--c-1),var(--c-2)); box-shadow:0 8px 30px rgba(13,142,163,.22); color:#052226; }
-  .D{ background:linear-gradient(160deg,var(--d-1),var(--d-2)); box-shadow:0 8px 30px rgba(69,76,102,.2); color:#fff; }
 
   .dropzone{
     background:var(--panel);
@@ -617,15 +615,6 @@
     text-overflow:ellipsis;
   }
 
-  .player .tag{
-    font-size:.7rem;
-    color:var(--text-2);
-    margin-top:2px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
   /* ---------- Modals ---------- */
   .modal{
     position:fixed; inset:0;
@@ -667,6 +656,44 @@
     color:var(--text-2);
     font-weight:700;
     margin-bottom:6px;
+  }
+
+  .upload-box{
+    width:100%;
+    aspect-ratio:1.8;
+    max-height:150px;
+    border-radius:14px;
+    border:1.5px dashed var(--panel-border);
+    background:#12131f;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    margin-bottom:16px;
+    position:relative;
+    overflow:hidden;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .upload-box:hover{
+    border-color:rgba(51,224,232,.55);
+    background:#161829;
+  }
+
+  .upload-box img{
+    display:none;
+    width:100%; height:100%;
+    object-fit:cover;
+    position:absolute; inset:0;
+  }
+  .upload-box.has-image img{ display:block; }
+  .upload-box.has-image #uploadPlaceholder{ display:none; }
+
+  #uploadPlaceholder{
+    color:var(--text-2);
+    font-size:.85rem;
+    font-weight:600;
+    text-align:center;
+    padding:0 12px;
   }
 
   input, select{
@@ -725,11 +752,12 @@
       min-height:auto;
       flex-direction:row;
       align-items:center;
-      justify-content:space-between;
+      justify-content:flex-start;
+      gap:14px;
       text-align:left;
       padding:14px 16px;
     }
-    .label .letter{ font-size:1.6rem; }
+    .letter-badge{ margin-bottom:0; width:46px; height:46px; font-size:1.2rem; }
   }
 </style>
 </head>
@@ -804,8 +832,8 @@
   <div class="container">
 
     <div class="tier" data-row="S">
-      <div class="label S">
-        <div class="letter">S</div>
+      <div class="label">
+        <div class="letter-badge S">S</div>
         <div class="name">Best Players</div>
         <div class="count" data-count="S">0 players</div>
       </div>
@@ -813,8 +841,8 @@
     </div>
 
     <div class="tier" data-row="A">
-      <div class="label A">
-        <div class="letter">A</div>
+      <div class="label">
+        <div class="letter-badge A">A</div>
         <div class="name">Strong</div>
         <div class="count" data-count="A">0 players</div>
       </div>
@@ -822,8 +850,8 @@
     </div>
 
     <div class="tier" data-row="B">
-      <div class="label B">
-        <div class="letter">B</div>
+      <div class="label">
+        <div class="letter-badge B">B</div>
         <div class="name">Solid</div>
         <div class="count" data-count="B">0 players</div>
       </div>
@@ -831,8 +859,8 @@
     </div>
 
     <div class="tier" data-row="C">
-      <div class="label C">
-        <div class="letter">C</div>
+      <div class="label">
+        <div class="letter-badge C">C</div>
         <div class="name">Average</div>
         <div class="count" data-count="C">0 players</div>
       </div>
@@ -840,8 +868,8 @@
     </div>
 
     <div class="tier" data-row="D">
-      <div class="label D">
-        <div class="letter">D</div>
+      <div class="label">
+        <div class="letter-badge D">D</div>
         <div class="name">Learning</div>
         <div class="count" data-count="D">0 players</div>
       </div>
@@ -875,10 +903,12 @@
     <h2>➕ Add Player</h2>
     <label class="field-label">Player name</label>
     <input type="text" id="playerName" placeholder="e.g. Warden" />
-    <label class="field-label">Image URL (optional)</label>
-    <input type="text" id="playerImage" placeholder="https://... (Discord avatar link works)" />
-    <label class="field-label">Clan / tag (optional)</label>
-    <input type="text" id="playerTag" placeholder="e.g. #Elite" />
+    <label class="field-label">Player image (optional)</label>
+    <div class="upload-box" id="uploadBox">
+      <img id="uploadPreviewImg" alt="" />
+      <span id="uploadPlaceholder">📷 Click to choose a photo</span>
+    </div>
+    <input type="file" id="playerImageFile" accept="image/*" style="display:none" />
     <label class="field-label">Tier</label>
     <select id="playerTier">
       <option value="S">S • Best Players</option>
@@ -903,7 +933,7 @@
   const zones = document.querySelectorAll(".dropzone");
   const tierRows = document.querySelectorAll(".tier");
 
-  function makePlayer(name, tag = "", image = ""){
+  function makePlayer(name, image = ""){
     const div = document.createElement("div");
     div.className = "player";
     div.draggable = owner;
@@ -925,13 +955,8 @@
     pname.className = "pname";
     pname.textContent = name;
 
-    const ptag = document.createElement("div");
-    ptag.className = "tag";
-    ptag.textContent = tag || "";
-
     div.appendChild(avatar);
     div.appendChild(pname);
-    div.appendChild(ptag);
 
     div.addEventListener("dragstart", () => {
       if(!owner) return;
@@ -1012,7 +1037,6 @@
     zones.forEach(z => {
       data[z.dataset.tier] = [...z.children].map(p => ({
         name: p.querySelector('.pname').textContent,
-        tag: p.querySelector('.tag').textContent,
         image: p.querySelector('.avatar img')?.getAttribute('src') || ""
       }));
     });
@@ -1044,7 +1068,7 @@
       Object.entries(data).forEach(([tier, players]) => {
         const zone = document.querySelector(`[data-tier="${tier}"]`);
         if(!zone) return;
-        players.forEach(p => zone.appendChild(makePlayer(p.name, p.tag, p.image)));
+        players.forEach(p => zone.appendChild(makePlayer(p.name, p.image)));
       });
 
       updateAll();
@@ -1119,6 +1143,47 @@
 
   // Add player
   const addModal = document.getElementById("addModal");
+  const uploadBox = document.getElementById("uploadBox");
+  const uploadPreviewImg = document.getElementById("uploadPreviewImg");
+  const playerImageFile = document.getElementById("playerImageFile");
+  let selectedImageData = "";
+
+  function resetImagePicker(){
+    selectedImageData = "";
+    uploadPreviewImg.src = "";
+    uploadBox.classList.remove("has-image");
+    playerImageFile.value = "";
+  }
+
+  uploadBox.addEventListener("click", () => playerImageFile.click());
+
+  playerImageFile.addEventListener("change", () => {
+    const file = playerImageFile.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Resize/compress client-side so the tier list stays light
+        const maxSize = 320;
+        let w = img.width, h = img.height;
+        if(w > h && w > maxSize){ h = Math.round(h * maxSize / w); w = maxSize; }
+        else if(h >= w && h > maxSize){ w = Math.round(w * maxSize / h); h = maxSize; }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+
+        selectedImageData = canvas.toDataURL("image/jpeg", 0.82);
+        uploadPreviewImg.src = selectedImageData;
+        uploadBox.classList.add("has-image");
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 
   document.getElementById("addBtn").onclick = () => {
     addModal.classList.add("show");
@@ -1126,25 +1191,23 @@
 
   document.getElementById("cancelAdd").onclick = () => {
     addModal.classList.remove("show");
+    resetImagePicker();
   };
 
   document.getElementById("savePlayer").onclick = () => {
     const name = document.getElementById("playerName").value.trim();
-    const image = document.getElementById("playerImage").value.trim();
-    const tag = document.getElementById("playerTag").value.trim();
     const tier = document.getElementById("playerTier").value;
 
     if(!name) return;
 
     document.querySelector(`[data-tier="${tier}"]`)
-      .appendChild(makePlayer(name, tag, image));
+      .appendChild(makePlayer(name, selectedImageData));
 
     updateAll();
     save();
 
     document.getElementById("playerName").value = "";
-    document.getElementById("playerImage").value = "";
-    document.getElementById("playerTag").value = "";
+    resetImagePicker();
     addModal.classList.remove("show");
   };
 
