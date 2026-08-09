@@ -1,7 +1,5 @@
 {
-  "S": [],
-  "A": [],
-  "B": [],
-  "C": [],
-  "D": []
+  "players": [],
+  "bracketGenerated": false,
+  "rounds": []
 }
