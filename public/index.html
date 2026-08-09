@@ -3,13 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Stumble Cups • Official Tier List</title>
+<title>Stumble Cups Asia/India • Tournament Bracket</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Orbitron:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg-0:#07070d;
-    --bg-1:#0d0a1f;
     --panel:rgba(15,16,32,.78);
     --panel-border:rgba(255,255,255,.08);
     --text-0:#f4f5fb;
@@ -20,17 +19,12 @@
     --cyan:#33e0e8;
     --pink:#ff5fa8;
     --gold:#ffb703;
-    --danger:#ff5a5a;
-
-    --s-1:#ffcf5c; --s-2:#ff8a00;
-    --a-1:#ff6b8b; --a-2:#c22d55;
-    --b-1:#9a7bff; --b-2:#5b2fd6;
-    --c-1:#43e0e6; --c-2:#0d8ea3;
-    --d-1:#8892b0; --d-2:#454c66;
+    --green:#3ddc84;
+    --red:#ff5f6d;
+    --discord:#5865f2;
   }
 
   *{box-sizing:border-box}
-
   html{scroll-behavior:smooth}
 
   body{
@@ -43,1438 +37,717 @@
     overflow-x:hidden;
   }
 
-  /* ---------- Ambient background ---------- */
   .stars{
-    position:fixed; inset:0; pointer-events:none; z-index:0;
-    opacity:.55;
+    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.55;
     background-image:
       radial-gradient(1.4px 1.4px at 15% 22%, rgba(255,255,255,.65), transparent),
       radial-gradient(1px 1px at 38% 68%, rgba(255,255,255,.45), transparent),
       radial-gradient(1.6px 1.6px at 62% 12%, rgba(255,255,255,.55), transparent),
       radial-gradient(1px 1px at 78% 48%, rgba(255,255,255,.4), transparent),
-      radial-gradient(1.4px 1.4px at 90% 80%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1px 1px at 8% 85%, rgba(255,255,255,.4), transparent);
-    background-repeat:repeat;
-    background-size:340px 340px;
+      radial-gradient(1.4px 1.4px at 90% 80%, rgba(255,255,255,.5), transparent);
+    background-repeat:repeat; background-size:340px 340px;
   }
 
   .nebula{
     position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
-      radial-gradient(circle at 12% 15%, rgba(139,107,255,.16), transparent 32%),
-      radial-gradient(circle at 85% 10%, rgba(51,224,232,.13), transparent 34%),
-      radial-gradient(circle at 70% 80%, rgba(255,95,168,.12), transparent 36%),
-      radial-gradient(circle at 20% 90%, rgba(255,183,3,.08), transparent 30%);
+      radial-gradient(circle at 12% 15%, rgba(139,107,255,.14), transparent 32%),
+      radial-gradient(circle at 85% 10%, rgba(51,224,232,.11), transparent 34%),
+      radial-gradient(circle at 70% 80%, rgba(255,95,168,.10), transparent 36%);
     filter:blur(40px);
-    animation:drift 40s ease-in-out infinite alternate;
   }
 
-  @keyframes drift{
-    from{ transform:translate3d(0,0,0) scale(1); }
-    to{ transform:translate3d(-1.5%,1.5%,0) scale(1.03); }
-  }
+  .page{ position:relative; z-index:1; }
 
-  .nebula2{
-    position:fixed; inset:0; pointer-events:none; z-index:0;
-    background:
-      radial-gradient(circle at 88% 75%, rgba(255,95,168,.10), transparent 30%),
-      radial-gradient(circle at 8% 60%, rgba(51,224,232,.10), transparent 32%);
-    filter:blur(50px);
-    animation:driftReverse 55s ease-in-out infinite alternate;
-  }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(14px);} to{ opacity:1; transform:translateY(0);} }
+  @media (prefers-reduced-motion: reduce){ * { animation:none !important; } }
 
-  @keyframes driftReverse{
-    from{ transform:translate3d(0,0,0) scale(1.02); }
-    to{ transform:translate3d(2%,-2%,0) scale(1); }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .nebula{ animation:none; }
-    .nebula2{ animation:none; }
-  }
-
-  .page{
-    position:relative;
-    z-index:1;
-  }
-
-  @keyframes slideDown{
-    from{ opacity:0; transform:translateY(-16px); }
-    to{ opacity:1; transform:translateY(0); }
-  }
-
-  /* ---------- Topbar ---------- */
   .topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:16px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
     padding:22px clamp(16px,4vw,48px);
     border-bottom:1px solid var(--panel-border);
     background:rgba(7,7,13,.55);
     backdrop-filter:blur(10px);
-    position:sticky;
-    top:0;
-    z-index:10;
-    animation:slideDown .5s ease both;
+    position:sticky; top:0; z-index:10;
   }
 
-  .brand{
-    display:flex;
-    flex-direction:column;
-    line-height:1;
-  }
-
-  .logo-wrap{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    animation:logoPop 4.5s ease-in-out infinite;
-  }
-
-  @keyframes logoPop{
-    0%,100%{ transform:translateY(0) rotate(0deg); }
-    50%{ transform:translateY(-3px) rotate(-1deg); }
-  }
-
-  .logo-icon{
-    flex-shrink:0;
-    filter:drop-shadow(0 0 8px rgba(255,138,0,.45));
-  }
-
+  .brand{ display:flex; flex-direction:column; line-height:1; }
+  .logo-line{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .logo{
-    font-family:'Baloo 2',sans-serif;
-    font-weight:800;
-    font-size:clamp(1.6rem,3.4vw,2.3rem);
-    display:flex;
-    gap:.3em;
-    letter-spacing:.5px;
+    font-family:'Baloo 2',sans-serif; font-weight:800;
+    font-size:clamp(1.4rem,3vw,2rem);
+    display:flex; gap:.3em;
   }
-
-  .logo .stumble{
-    color:#eafcff;
-    text-shadow:
-      1.5px 1.5px 0 #0a1d22,
-      3px 3px 0 #0a1d22,
-      0 0 22px rgba(51,224,232,.55);
-  }
-
+  .logo .stumble{ color:#eafcff; text-shadow:1.5px 1.5px 0 #0a1d22, 0 0 18px rgba(51,224,232,.5); }
   .logo .cups{
-    background:linear-gradient(100deg,var(--s-1) 0%,#fff5d9 10%,var(--s-2) 26%,#ff5200 55%,var(--s-1) 100%);
-    background-size:260% 100%;
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    -webkit-text-stroke:1.6px #3a1400;
-    text-shadow:
-      2px 3px 0 rgba(58,20,0,.85),
-      0 0 24px rgba(255,138,0,.55);
-    animation:shine 4.5s linear infinite;
+    background:linear-gradient(100deg,#ffcf5c,#ff8a00 60%,#ffcf5c);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    -webkit-text-stroke:1.4px #3a1400;
+    text-shadow:2px 3px 0 rgba(58,20,0,.85);
   }
+  .region-tag{
+    font-family:'Inter',sans-serif; font-size:.62rem; font-weight:800; letter-spacing:1.5px;
+    padding:4px 10px; border-radius:999px; background:rgba(255,183,3,.15);
+    color:var(--gold); border:1px solid rgba(255,183,3,.35); white-space:nowrap;
+  }
+  .tagline{ margin-top:4px; font-size:.68rem; letter-spacing:3px; color:var(--text-2); font-weight:700; }
 
-  @keyframes shine{
-    from{ background-position:0% 0; }
-    to{ background-position:260% 0; }
-  }
-
-  @keyframes fadeUp{
-    from{ opacity:0; transform:translateY(16px); }
-    to{ opacity:1; transform:translateY(0); }
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .logo-wrap{ animation:none; }
-  }
-
-  .tagline{
-    margin-top:4px;
-    font-size:.72rem;
-    letter-spacing:3px;
-    color:var(--text-2);
-    font-weight:600;
-  }
-
-  .top-actions{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    flex-wrap:wrap;
-  }
+  .top-actions{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 
   .pill{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:9px 16px;
-    border-radius:999px;
-    background:rgba(51,224,232,.08);
-    border:1px solid rgba(51,224,232,.3);
-    color:var(--cyan);
-    font-weight:700;
-    font-size:.85rem;
-    white-space:nowrap;
+    display:flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
+    background:rgba(51,224,232,.08); border:1px solid rgba(51,224,232,.3);
+    color:var(--cyan); font-weight:700; font-size:.82rem; white-space:nowrap;
   }
+  .pill .dot{ width:7px; height:7px; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px var(--cyan); }
 
-  .pill .dot{
-    width:7px;height:7px;border-radius:50%;
-    background:var(--cyan);
-    box-shadow:0 0 8px var(--cyan);
+  .discord-pill{
+    display:flex; align-items:center; gap:8px; padding:6px 14px 6px 6px; border-radius:999px;
+    background:rgba(88,101,242,.12); border:1px solid rgba(88,101,242,.4); font-size:.82rem; font-weight:700;
   }
+  .discord-pill img{ width:24px; height:24px; border-radius:50%; }
 
-  button{
-    border:none;
-    font-family:inherit;
-    cursor:pointer;
-    transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
-  }
-
+  button{ border:none; font-family:inherit; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease; }
   button:active{ transform:translateY(1px); }
+  button:disabled{ opacity:.4; cursor:not-allowed; }
 
-  .owner-btn, .add-btn, .primary, .secondary{
-    padding:11px 18px;
-    border-radius:12px;
-    font-weight:700;
-    font-size:.88rem;
+  .owner-btn, .primary, .secondary, .ghost, .discord-btn{
+    padding:11px 18px; border-radius:12px; font-weight:700; font-size:.86rem;
   }
-
   .owner-btn{
-    background:rgba(255,255,255,.06);
-    color:var(--text-0);
-    border:1px solid var(--panel-border);
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
+    background:rgba(255,255,255,.06); color:var(--text-0); border:1px solid var(--panel-border);
+    display:inline-flex; align-items:center; gap:8px;
   }
   .owner-btn:hover{ border-color:rgba(255,183,3,.6); box-shadow:0 0 18px rgba(255,183,3,.25); }
 
-  .crown{
-    display:inline-block;
-    filter:drop-shadow(0 0 6px rgba(255,183,3,.65));
-    transition:transform .3s ease;
+  .discord-btn{
+    background:var(--discord); color:#fff; display:inline-flex; align-items:center; gap:8px;
   }
-  .owner-btn:hover .crown{ transform:rotate(-14deg) scale(1.2); }
+  .discord-btn:hover{ box-shadow:0 0 18px rgba(88,101,242,.5); }
 
-  .add-btn{
-    background:linear-gradient(135deg,var(--violet),var(--pink));
-    color:white;
-    display:none;
-    box-shadow:0 0 22px rgba(139,107,255,.35);
-  }
-  .add-btn.show{ display:inline-flex; }
-  .add-btn:hover{ transform:translateY(-1px); box-shadow:0 0 28px rgba(139,107,255,.5); }
+  .primary{ background:linear-gradient(135deg,var(--violet),var(--cyan)); color:#07070d; }
+  .primary:hover{ box-shadow:0 0 20px rgba(139,107,255,.4); }
+  .secondary{ background:#1a1b2c; color:var(--text-0); }
+  .ghost{ background:transparent; border:1px solid var(--panel-border); color:var(--text-1); }
+  .danger{ background:linear-gradient(135deg,#ff5f6d,#c22d55); color:#fff; }
 
-  /* ---------- Hero ---------- */
-  .hero{
-    text-align:center;
-    padding:56px 20px 30px;
-    max-width:820px;
-    margin:0 auto;
-  }
-
+  .hero{ text-align:center; padding:50px 20px 24px; max-width:820px; margin:0 auto; }
   .eyebrow{
-    display:inline-block;
-    font-size:.72rem;
-    letter-spacing:2.5px;
-    font-weight:700;
-    color:var(--text-2);
-    border:1px solid var(--panel-border);
-    padding:6px 14px;
-    border-radius:999px;
-    margin-bottom:22px;
-    animation:fadeUp .6s ease both;
-    animation-delay:.05s;
+    display:inline-block; font-size:.7rem; letter-spacing:2.5px; font-weight:700; color:var(--text-2);
+    border:1px solid var(--panel-border); padding:6px 14px; border-radius:999px; margin-bottom:20px;
   }
-
   .hero h1{
-    font-family:'Orbitron',sans-serif;
-    font-weight:800;
-    font-size:clamp(2.1rem,5.5vw,3.4rem);
-    margin:0 0 14px;
-    line-height:1.15;
-    color:var(--text-0);
-    animation:fadeUp .6s ease both;
-    animation-delay:.15s;
+    font-family:'Orbitron',sans-serif; font-weight:800; font-size:clamp(1.9rem,5vw,3rem);
+    margin:0 0 12px; line-height:1.15;
   }
-
   .hero h1 .grad{
     background:linear-gradient(90deg,var(--violet),var(--cyan) 55%,var(--pink));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  .hero-sub{ color:var(--text-1); font-size:.98rem; margin:0 0 30px; }
+
+  .stats-row{ display:flex; justify-content:center; gap:14px; flex-wrap:wrap; }
+  .stat{ background:var(--panel); border:1px solid var(--panel-border); border-radius:16px; padding:14px 24px; min-width:100px; }
+  .stat span{ display:block; font-family:'Orbitron',sans-serif; font-size:1.35rem; font-weight:800; }
+  .stat label{ font-size:.68rem; letter-spacing:1.5px; color:var(--text-2); font-weight:700; }
+
+  .section{ width:min(1200px,94%); margin:0 auto 40px; animation:fadeUp .5s ease both; }
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .section-head h2{ font-family:'Orbitron',sans-serif; font-size:1.15rem; margin:0; }
+  .section-head p{ margin:0; color:var(--text-2); font-size:.82rem; }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--panel-border); border-radius:20px;
+    padding:20px; backdrop-filter:blur(12px);
   }
 
-  .hero-sub{
-    color:var(--text-1);
-    font-size:1rem;
-    margin:0 0 34px;
-    animation:fadeUp .6s ease both;
-    animation-delay:.25s;
+  /* Registration */
+  .register-row{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  .register-row input[type="text"]{ flex:1 1 220px; }
+  input, select{
+    padding:13px 14px; border-radius:12px; border:1px solid var(--panel-border);
+    background:#12131f; color:var(--text-0); outline:none; font-family:inherit; font-size:.9rem;
   }
+  input:focus, select:focus{ border-color:rgba(139,107,255,.6); box-shadow:0 0 0 3px rgba(139,107,255,.15); }
 
-  .stats-row{
-    display:flex;
-    justify-content:center;
-    gap:14px;
-    flex-wrap:wrap;
-    animation:fadeUp .6s ease both;
-    animation-delay:.35s;
+  .login-gate{
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap; padding:6px 0;
   }
+  .login-gate p{ margin:0; color:var(--text-1); font-size:.88rem; }
 
-  .stat{
-    background:var(--panel);
+  .players-grid{ display:flex; flex-wrap:wrap; gap:12px; margin-top:16px; }
+  .player-chip{
+    display:flex; align-items:center; gap:10px; background:#12131f; border:1px solid var(--panel-border);
+    border-radius:999px; padding:6px 14px 6px 6px;
+  }
+  .player-chip .avatar{
+    width:30px; height:30px; border-radius:50%; overflow:hidden; flex-shrink:0;
+    background:linear-gradient(135deg,var(--violet),var(--cyan)); display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:.8rem;
+  }
+  .player-chip .avatar img{ width:100%; height:100%; object-fit:cover; }
+  .player-chip .pname{ font-size:.85rem; font-weight:700; }
+  .player-chip .del{
+    background:transparent; border:none; color:var(--text-2); font-size:1rem; line-height:1; padding:0 2px;
+  }
+  .player-chip .del:hover{ color:var(--red); }
+  .empty-note{ color:var(--text-2); font-size:.85rem; margin-top:10px; }
+
+  /* Bracket */
+  .bracket-scroll{ display:flex; gap:20px; overflow-x:auto; padding-bottom:10px; }
+  .round-col{ min-width:260px; flex:1 0 260px; display:flex; flex-direction:column; gap:16px; }
+  .round-title{
+    text-align:center; font-family:'Orbitron',sans-serif; font-size:.85rem; font-weight:700;
+    letter-spacing:1px; padding:10px; border-radius:12px;
+    background:linear-gradient(135deg, rgba(139,107,255,.18), rgba(51,224,232,.14));
     border:1px solid var(--panel-border);
-    border-radius:16px;
-    padding:16px 26px;
-    min-width:110px;
-    animation:floatY 5s ease-in-out infinite;
   }
-  .stat:nth-child(1){ animation-delay:0s; }
-  .stat:nth-child(2){ animation-delay:.4s; }
-  .stat:nth-child(3){ animation-delay:.8s; }
+  .round-col .matches{ display:flex; flex-direction:column; gap:24px; flex:1; justify-content:space-around; }
 
-  @keyframes floatY{
-    0%,100%{ transform:translateY(0); }
-    50%{ transform:translateY(-6px); }
+  .match-card{
+    background:#12131f; border:1px solid var(--panel-border); border-radius:16px; padding:12px;
   }
+  .match-card.confirmed{ border-color:rgba(61,220,132,.5); box-shadow:0 0 16px rgba(61,220,132,.12); }
+  .match-slot{
+    display:flex; align-items:center; gap:10px; padding:8px; border-radius:10px;
+  }
+  .match-slot.winner{ background:rgba(61,220,132,.12); }
+  .match-slot .avatar{
+    width:28px; height:28px; border-radius:8px; overflow:hidden; flex-shrink:0;
+    background:linear-gradient(135deg,var(--violet),var(--cyan)); display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:.75rem;
+  }
+  .match-slot .avatar img{ width:100%; height:100%; object-fit:cover; }
+  .match-slot .name{ font-size:.85rem; font-weight:700; flex:1; }
+  .match-slot .name.tbd{ color:var(--text-2); font-weight:600; }
+  .vs{ text-align:center; font-size:.68rem; color:var(--text-2); letter-spacing:2px; margin:4px 0; }
 
-  @media (prefers-reduced-motion: reduce){
-    .eyebrow, .hero h1, .hero-sub, .stats-row, .stat, .topbar, .logo-wrap{ animation:none; }
-  }
+  .match-actions{ margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+  .match-actions button{ width:100%; padding:9px 10px; border-radius:10px; font-size:.78rem; font-weight:700; }
+  .report-btn{ background:#1a1b2c; color:var(--text-0); border:1px solid var(--panel-border); }
+  .report-btn:hover{ border-color:rgba(51,224,232,.5); }
+  .confirm-btn{ background:linear-gradient(135deg,var(--green),#1fa563); color:#06210f; }
+  .status-note{ font-size:.72rem; color:var(--text-2); text-align:center; margin-top:8px; }
+  .status-note.wait{ color:var(--gold); }
 
-  .stat span{
-    display:block;
-    font-family:'Orbitron',sans-serif;
-    font-size:1.5rem;
-    font-weight:800;
-    color:var(--text-0);
-  }
+  .owner-mini{ margin-top:8px; display:flex; gap:6px; }
+  .owner-mini select{ flex:1; padding:7px 8px; font-size:.75rem; }
+  .owner-mini button{ padding:7px 10px; font-size:.72rem; border-radius:8px; }
 
-  .stat label{
-    font-size:.7rem;
-    letter-spacing:1.5px;
-    color:var(--text-2);
-    font-weight:700;
-  }
+  .bracket-controls{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
 
-  /* ---------- Controls ---------- */
-  .controls{
-    max-width:1200px;
-    margin:0 auto 30px;
-    padding:0 clamp(16px,4vw,48px);
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-    align-items:center;
-    animation:fadeUp .6s ease both;
-    animation-delay:.45s;
-  }
-
-  .size-toggle{
-    display:flex;
-    gap:4px;
-    background:var(--panel);
-    border:1px solid var(--panel-border);
-    border-radius:12px;
-    padding:4px;
-  }
-
-  .size-btn{
-    padding:8px 13px;
-    border-radius:9px;
-    background:transparent;
-    color:var(--text-2);
-    font-weight:700;
-    font-size:.78rem;
-  }
-
-  .size-btn.active{
-    background:linear-gradient(135deg,var(--violet),var(--cyan));
-    color:var(--bg-0);
-    box-shadow:0 0 12px rgba(51,224,232,.3);
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    .controls{ animation:none; }
-  }
-
-  .search-wrap{
-    position:relative;
-    flex:1 1 260px;
-  }
-
-  .search-wrap svg{
-    position:absolute;
-    left:16px; top:50%;
-    transform:translateY(-50%);
-    opacity:.55;
-  }
-
-  #searchInput{
-    width:100%;
-    padding:13px 16px 13px 44px;
-    border-radius:14px;
-    border:1px solid var(--panel-border);
-    background:var(--panel);
-    color:var(--text-0);
-    font-size:.92rem;
-    outline:none;
-  }
-  #searchInput:focus{
-    border-color:rgba(139,107,255,.6);
-    box-shadow:0 0 0 3px rgba(139,107,255,.15);
-  }
-  #searchInput::placeholder{ color:var(--text-2); }
-
-  .filter-chips{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-  }
-
-  .chip{
-    padding:10px 16px;
-    border-radius:999px;
-    background:var(--panel);
-    border:1px solid var(--panel-border);
-    color:var(--text-1);
-    font-weight:700;
-    font-size:.82rem;
-  }
-
-  .chip.active{
-    color:var(--bg-0);
-    background:linear-gradient(135deg,var(--cyan),var(--violet));
-    border-color:transparent;
-    box-shadow:0 0 16px rgba(51,224,232,.35);
-  }
-
-  /* ---------- Tier rows ---------- */
-  .container{
-    width:min(1200px,94%);
-    margin:0 auto 60px;
-  }
-
-  .tier{
-    display:grid;
-    grid-template-columns:150px 1fr;
-    gap:16px;
-    margin-bottom:18px;
-    align-items:stretch;
-    animation:fadeUp .5s ease both;
-  }
-  .tier:nth-of-type(1){ animation-delay:.5s; }
-  .tier:nth-of-type(2){ animation-delay:.6s; }
-  .tier:nth-of-type(3){ animation-delay:.7s; }
-  .tier:nth-of-type(4){ animation-delay:.8s; }
-  .tier:nth-of-type(5){ animation-delay:.9s; }
-
-  @media (prefers-reduced-motion: reduce){
-    .tier{ animation:none; }
-  }
-
-  .label{
-    border-radius:20px;
-    padding:18px 16px;
-    text-align:center;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    min-height:130px;
-    background:var(--panel);
-    border:1px solid var(--panel-border);
-    backdrop-filter:blur(12px);
-  }
-
-  .letter-badge{
-    width:56px;
-    height:56px;
-    border-radius:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:'Orbitron',sans-serif;
-    font-weight:900;
-    font-size:1.5rem;
-    margin-bottom:10px;
-    flex-shrink:0;
-  }
-
-  .letter-badge.S{ background:linear-gradient(160deg,var(--s-1),var(--s-2)); color:#3a1400; box-shadow:0 0 22px rgba(255,138,0,.4); }
-  .letter-badge.A{ background:linear-gradient(160deg,var(--a-1),var(--a-2)); color:#fff; box-shadow:0 0 22px rgba(194,45,85,.4); }
-  .letter-badge.B{ background:linear-gradient(160deg,var(--b-1),var(--b-2)); color:#fff; box-shadow:0 0 22px rgba(91,47,214,.4); }
-  .letter-badge.C{ background:linear-gradient(160deg,var(--c-1),var(--c-2)); color:#052226; box-shadow:0 0 22px rgba(13,142,163,.4); }
-  .letter-badge.D{ background:linear-gradient(160deg,var(--d-1),var(--d-2)); color:#fff; box-shadow:0 0 22px rgba(69,76,102,.4); }
-
-  .label .name{
-    font-size:.85rem;
-    font-weight:700;
-    color:var(--text-0);
-  }
-
-  .label .count{
-    margin-top:6px;
-    font-size:.7rem;
-    letter-spacing:1px;
-    color:var(--text-2);
-    font-weight:700;
-  }
-
-  .dropzone{
-    background:var(--panel);
-    border:1px solid var(--panel-border);
-    border-radius:20px;
-    padding:16px;
-    min-height:140px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:14px;
-    align-content:flex-start;
-    backdrop-filter:blur(12px);
-    transition:border-color .2s, box-shadow .2s, background .2s;
-  }
-
-  .dropzone.dragover{
-    border-color:var(--cyan);
-    box-shadow:0 0 0 3px rgba(51,224,232,.15);
-    background:rgba(30,32,58,.9);
-  }
-
-  :root{
-    --player-w:112px;
-  }
-  body.size-s{ --player-w:86px; }
-  body.size-l{ --player-w:142px; }
-
-  .player{
-    width:var(--player-w);
-    background:linear-gradient(180deg,rgba(30,30,50,.9),rgba(15,15,26,.9));
-    border:1px solid var(--panel-border);
-    border-radius:16px;
-    padding:10px;
-    text-align:center;
-    cursor:default;
-    user-select:none;
-    position:relative;
-    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, width .25s ease;
-  }
-
-  body.is-owner .player{
-    cursor:grab;
-    touch-action:none;
-  }
-
-  .player:hover{
-    transform:translateY(-3px);
-    border-color:rgba(51,224,232,.5);
-    box-shadow:0 10px 24px rgba(51,224,232,.15);
-  }
-
-  .player:hover .avatar{
-    transform:scale(1.05) rotate(-1.5deg);
-  }
-
-  .player.dragging{ opacity:.35; }
-  .player.hidden{ display:none; }
-  .player.ctx-active{
-    border-color:rgba(255,90,90,.6);
-    box-shadow:0 0 0 3px rgba(255,90,90,.15);
-  }
-
-  .drag-clone{
-    position:fixed;
-    z-index:999;
-    pointer-events:none;
-    transform:scale(1.06) rotate(-3deg);
-    box-shadow:0 20px 45px rgba(51,224,232,.4);
-    cursor:grabbing;
-  }
-
-  [data-tier="S"] .player:first-child::before{
-    content:"👑";
-    position:absolute;
-    top:-13px; left:2px;
-    font-size:1.1rem;
-    filter:drop-shadow(0 0 6px rgba(255,183,3,.75));
-    animation:floatY 3s ease-in-out infinite;
-    z-index:3;
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    [data-tier="S"] .player:first-child::before{ animation:none; }
-  }
-
-  .avatar{
-    width:100%;
-    aspect-ratio:1;
-    border-radius:12px;
-    background:linear-gradient(135deg,var(--violet),var(--cyan),var(--pink));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:800;
-    font-size:1.15rem;
-    color:white;
-    margin-bottom:8px;
-    overflow:hidden;
-    position:relative;
-    transition:transform .2s ease;
-  }
-
-  .avatar img{
-    width:100%; height:100%;
-    object-fit:cover;
-    position:absolute; inset:0;
-    -webkit-user-drag:none;
-    -webkit-touch-callout:none;
-  }
-
-  .player .pname{
-    font-size:.85rem;
-    font-weight:700;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
-  /* ---------- Context menu ---------- */
-  .ctx-menu{
-    position:fixed;
-    z-index:200;
-    min-width:190px;
-    background:#0d0e1c;
-    border:1px solid var(--panel-border);
-    border-radius:14px;
-    padding:6px;
-    box-shadow:0 18px 40px rgba(0,0,0,.55);
-    display:none;
-    flex-direction:column;
-    gap:2px;
-    animation:ctxPop .12s ease both;
-  }
-  .ctx-menu.show{ display:flex; }
-
-  @keyframes ctxPop{
-    from{ opacity:0; transform:scale(.96) translateY(-4px); }
-    to{ opacity:1; transform:scale(1) translateY(0); }
-  }
-
-  .ctx-item{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    width:100%;
-    padding:10px 12px;
-    border-radius:9px;
-    background:transparent;
-    color:var(--text-0);
-    font-weight:600;
-    font-size:.85rem;
-    text-align:left;
-  }
-
-  .ctx-item:hover{
-    background:rgba(255,255,255,.06);
-  }
-
-  .ctx-item.danger{
-    color:var(--danger);
-  }
-  .ctx-item.danger:hover{
-    background:rgba(255,90,90,.12);
-  }
-
-  .ctx-item .ctx-icon{
-    font-size:.95rem;
-    line-height:1;
-  }
-
-  /* ---------- Modals ---------- */
+  /* Modals */
   .modal{
-    position:fixed; inset:0;
-    background:rgba(4,4,10,.78);
-    backdrop-filter:blur(4px);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-    z-index:50;
+    position:fixed; inset:0; background:rgba(4,4,10,.78); backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center; padding:20px; z-index:50;
   }
   .modal.show{ display:flex; }
-
   .card{
-    width:min(440px,100%);
-    background:#0d0e1c;
-    border:1px solid var(--panel-border);
-    border-radius:22px;
-    padding:26px;
-    box-shadow:0 25px 60px rgba(0,0,0,.5);
+    width:min(420px,100%); background:#0d0e1c; border:1px solid var(--panel-border);
+    border-radius:22px; padding:26px; box-shadow:0 25px 60px rgba(0,0,0,.5);
   }
+  .card h2{ margin:0 0 8px; font-family:'Orbitron',sans-serif; font-size:1.15rem; }
+  .card p{ color:var(--text-1); margin:0 0 18px; font-size:.86rem; }
+  .card input, .card select{ width:100%; margin-bottom:12px; }
+  .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:6px; flex-wrap:wrap; }
+  .field-label{ display:block; font-size:.7rem; letter-spacing:1px; color:var(--text-2); font-weight:700; margin-bottom:6px; }
 
-  .card h2{
-    margin:0 0 8px;
-    font-family:'Orbitron',sans-serif;
-    font-size:1.25rem;
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translate(-50%, 20px); z-index:100;
+    background:#14152a; border:1px solid var(--panel-border); color:var(--text-0);
+    padding:12px 20px; border-radius:12px; font-size:.85rem; opacity:0; pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
   }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); }
+  .toast.error{ border-color:rgba(255,95,109,.5); }
 
-  .card p{
-    color:var(--text-1);
-    margin:0 0 18px;
-    font-size:.88rem;
-  }
-
-  label.field-label{
-    display:block;
-    font-size:.72rem;
-    letter-spacing:1px;
-    color:var(--text-2);
-    font-weight:700;
-    margin-bottom:6px;
-  }
-
-  .upload-box{
-    width:100%;
-    aspect-ratio:1.8;
-    max-height:150px;
-    border-radius:14px;
-    border:1.5px dashed var(--panel-border);
-    background:#12131f;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    margin-bottom:16px;
-    position:relative;
-    overflow:hidden;
-    transition:border-color .2s ease, background .2s ease;
-  }
-  .upload-box:hover{
-    border-color:rgba(51,224,232,.55);
-    background:#161829;
-  }
-
-  .upload-box img{
-    display:none;
-    width:100%; height:100%;
-    object-fit:cover;
-    position:absolute; inset:0;
-  }
-  .upload-box.has-image img{ display:block; }
-  .upload-box.has-image #uploadPlaceholder{ display:none; }
-
-  #uploadPlaceholder{
-    color:var(--text-2);
-    font-size:.85rem;
-    font-weight:600;
-    text-align:center;
-    padding:0 12px;
-  }
-
-  input, select{
-    width:100%;
-    padding:13px 14px;
-    border-radius:12px;
-    border:1px solid var(--panel-border);
-    background:#12131f;
-    color:var(--text-0);
-    margin-bottom:14px;
-    outline:none;
-    font-family:inherit;
-    font-size:.9rem;
-  }
-  input:focus, select:focus{
-    border-color:rgba(139,107,255,.6);
-    box-shadow:0 0 0 3px rgba(139,107,255,.15);
-  }
-
-  .actions{
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
-    margin-top:6px;
-    flex-wrap:wrap;
-  }
-
-  .primary{
-    background:linear-gradient(135deg,var(--violet),var(--cyan));
-    color:#07070d;
-  }
-  .primary:hover{ box-shadow:0 0 20px rgba(139,107,255,.4); }
-
-  .secondary{
-    background:#1a1b2c;
-    color:var(--text-0);
-  }
-
-  .danger-btn{
-    background:linear-gradient(135deg,#ff5a5a,#c22d2d);
-    color:#fff;
-  }
-  .danger-btn:hover{ box-shadow:0 0 20px rgba(255,90,90,.4); }
-
-  .hint{
-    margin-top:12px;
-    color:var(--text-2);
-    font-size:.78rem;
-    text-align:center;
-  }
-
-  footer{
-    text-align:center;
-    padding:30px 20px 50px;
-    color:var(--text-2);
-    font-size:.78rem;
-  }
+  footer{ text-align:center; padding:30px 20px 50px; color:var(--text-2); font-size:.76rem; }
 
   @media (max-width:700px){
-    .tier{ grid-template-columns:1fr; }
-    .label{
-      min-height:auto;
-      flex-direction:row;
-      align-items:center;
-      justify-content:flex-start;
-      gap:14px;
-      text-align:left;
-      padding:14px 16px;
-    }
-    .letter-badge{ margin-bottom:0; width:46px; height:46px; font-size:1.2rem; }
+    .register-row{ flex-direction:column; align-items:stretch; }
   }
 </style>
 </head>
 <body>
 <div class="stars"></div>
 <div class="nebula"></div>
-<div class="nebula2"></div>
 
 <div class="page">
 
   <header class="topbar">
     <div class="brand">
-      <div class="logo-wrap">
-        <svg class="logo-icon" width="34" height="34" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="cupGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#ffcf5c"/>
-              <stop offset="1" stop-color="#ff8a00"/>
-            </linearGradient>
-          </defs>
-          <path d="M3 4h3a3 3 0 0 0 3 3" stroke="#33e0e8" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M21 4h-3a3 3 0 0 1-3 3" stroke="#33e0e8" stroke-width="1.6" stroke-linecap="round"/>
-          <path d="M6 3h12v2a6 6 0 0 1-6 6 6 6 0 0 1-6-6V3Z" fill="url(#cupGrad)"/>
-          <rect x="10.5" y="11" width="3" height="4" fill="url(#cupGrad)"/>
-          <path d="M7.5 19h9l-1 2h-7l-1-2Z" fill="url(#cupGrad)"/>
-        </svg>
+      <div class="logo-line">
         <div class="logo"><span class="stumble">STUMBLE</span><span class="cups">CUPS</span></div>
+        <span class="region-tag">ASIA/INDIA</span>
       </div>
-      <div class="tagline">OFFICIAL TIER LIST</div>
+      <div class="tagline">TOURNAMENT BRACKET</div>
     </div>
     <div class="top-actions">
       <div class="pill"><span class="dot"></span><span id="playerPill">0 players</span></div>
-      <button class="owner-btn" id="ownerBtn"><span class="crown">👑</span> Owner Area</button>
-      <button class="add-btn" id="addBtn">+ Add Player</button>
+      <div id="discordArea"></div>
+      <button class="owner-btn" id="ownerBtn">👑 Owner Area</button>
     </div>
   </header>
 
   <section class="hero">
-    <div class="eyebrow">COMMUNITY RANKED • FAN PROJECT</div>
-    <h1>The community<br><span class="grad">tier list</span></h1>
-    <p class="hero-sub">Made by Viday — ranked by the community.</p>
+    <div class="eyebrow">COMMUNITY EVENT • FAN PROJECT</div>
+    <h1>The community<br><span class="grad">tournament</span></h1>
+    <p class="hero-sub">Log in with Discord, register, and confirm your results together.</p>
     <div class="stats-row">
       <div class="stat"><span id="statPlayers">0</span><label>PLAYERS</label></div>
-      <div class="stat"><span id="statTiers">5</span><label>TIERS</label></div>
-      <div class="stat"><span id="statTop">0</span><label>S TIER</label></div>
+      <div class="stat"><span id="statRounds">0</span><label>ROUNDS</label></div>
+      <div class="stat"><span id="statDone">0</span><label>CONFIRMED</label></div>
     </div>
   </section>
 
-  <section class="controls">
-    <div class="search-wrap">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="11" cy="11" r="7" stroke="#aab0c6" stroke-width="2"/>
-        <path d="M20 20L16.5 16.5" stroke="#aab0c6" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <input id="searchInput" type="text" placeholder="Search a player..." autocomplete="off" />
+  <section class="section" id="registerSection">
+    <div class="section-head">
+      <h2>📝 Registration</h2>
+      <p id="registerStatus">Open — log in with Discord to join</p>
     </div>
-    <div class="filter-chips" id="filterChips">
-      <button class="chip active" data-filter="ALL">All</button>
-      <button class="chip" data-filter="S">S</button>
-      <button class="chip" data-filter="A">A</button>
-      <button class="chip" data-filter="B">B</button>
-      <button class="chip" data-filter="C">C</button>
-      <button class="chip" data-filter="D">D</button>
-    </div>
-    <div class="size-toggle" id="sizeToggle">
-      <button class="size-btn" data-size="s">S</button>
-      <button class="size-btn active" data-size="m">M</button>
-      <button class="size-btn" data-size="l">L</button>
+    <div class="panel">
+      <div class="login-gate" id="loginGate"></div>
+      <div class="players-grid" id="playersGrid"></div>
+      <div class="empty-note" id="playersEmpty">No players registered yet.</div>
     </div>
   </section>
 
-  <div class="container">
-
-    <div class="tier" data-row="S">
-      <div class="label">
-        <div class="letter-badge S">S</div>
-        <div class="name">Best Players</div>
-        <div class="count" data-count="S">0 players</div>
-      </div>
-      <div class="dropzone" data-tier="S"></div>
+  <section class="section" id="bracketSection">
+    <div class="section-head">
+      <h2>🏆 Bracket</h2>
+      <p id="bracketStatus">Waiting for the owner to generate the bracket</p>
     </div>
-
-    <div class="tier" data-row="A">
-      <div class="label">
-        <div class="letter-badge A">A</div>
-        <div class="name">Strong</div>
-        <div class="count" data-count="A">0 players</div>
+    <div class="panel">
+      <div class="bracket-scroll" id="bracketScroll"></div>
+      <div class="empty-note" id="bracketEmpty">The bracket hasn't been generated yet.</div>
+      <div class="bracket-controls" id="ownerBracketControls" style="display:none">
+        <button class="primary" id="generateBtn">Generate bracket</button>
+        <button class="ghost" id="resetBracketBtn">Reset bracket only</button>
+        <button class="danger" id="resetAllBtn">Reset everything</button>
       </div>
-      <div class="dropzone" data-tier="A"></div>
     </div>
+  </section>
 
-    <div class="tier" data-row="B">
-      <div class="label">
-        <div class="letter-badge B">B</div>
-        <div class="name">Solid</div>
-        <div class="count" data-count="B">0 players</div>
-      </div>
-      <div class="dropzone" data-tier="B"></div>
-    </div>
-
-    <div class="tier" data-row="C">
-      <div class="label">
-        <div class="letter-badge C">C</div>
-        <div class="name">Average</div>
-        <div class="count" data-count="C">0 players</div>
-      </div>
-      <div class="dropzone" data-tier="C"></div>
-    </div>
-
-    <div class="tier" data-row="D">
-      <div class="label">
-        <div class="letter-badge D">D</div>
-        <div class="name">Learning</div>
-        <div class="count" data-count="D">0 players</div>
-      </div>
-      <div class="dropzone" data-tier="D"></div>
-    </div>
-
-  </div>
-
-  <footer>Stumble Cups is a community fan project — not affiliated with Scopely / Stumble Guys.</footer>
+  <footer>Stumble Cups Asia/India Tournament is a community fan project — not an official Scopely / Stumble Guys product.</footer>
 
 </div>
 
-<!-- Right-click context menu (owner only) -->
-<div class="ctx-menu" id="ctxMenu">
-  <button class="ctx-item" id="ctxDiscord"><span class="ctx-icon">🔗</span> View Discord profile</button>
-  <button class="ctx-item danger" id="ctxDelete"><span class="ctx-icon">🗑️</span> Delete player</button>
-</div>
-
-<!-- Login modal -->
+<!-- Owner password modal (only reachable once logged in with Discord) -->
 <div class="modal" id="loginModal">
   <div class="card">
     <h2>🔐 Owner Access</h2>
-    <p>Enter the password to edit the tier list.</p>
+    <p>Enter the password to manage players and the bracket.</p>
     <label class="field-label">Password</label>
     <input type="password" id="passwordInput" placeholder="Enter password" />
     <div class="actions">
       <button class="secondary" id="cancelLogin">Cancel</button>
       <button class="primary" id="loginBtn">Enter</button>
     </div>
-    <div class="hint">The password is verified on the server, not in the browser.</div>
   </div>
 </div>
 
-<!-- Add player modal -->
-<div class="modal" id="addModal">
-  <div class="card">
-    <h2>➕ Add Player</h2>
-    <label class="field-label">Player name</label>
-    <input type="text" id="playerName" placeholder="e.g. Warden" />
-    <label class="field-label">Discord ID (optional)</label>
-    <input type="text" id="playerDiscordId" placeholder="e.g. 123456789012345678" inputmode="numeric" />
-    <div class="hint" id="discordIdHint" style="text-align:left;margin-top:-10px;margin-bottom:14px;">Used for the right-click "View Discord profile" link.</div>
-    <label class="field-label">Player image (optional)</label>
-    <div class="upload-box" id="uploadBox">
-      <img id="uploadPreviewImg" alt="" />
-      <span id="uploadPlaceholder">📷 Click to choose a photo</span>
-    </div>
-    <input type="file" id="playerImageFile" accept="image/*" style="display:none" />
-    <label class="field-label">Tier</label>
-    <select id="playerTier">
-      <option value="S">S • Best Players</option>
-      <option value="A">A • Strong</option>
-      <option value="B">B • Solid</option>
-      <option value="C">C • Average</option>
-      <option value="D">D • Learning</option>
-    </select>
-    <div class="actions">
-      <button class="secondary" id="cancelAdd">Cancel</button>
-      <button class="primary" id="savePlayer">Add player</button>
-    </div>
-  </div>
-</div>
-
-<!-- Delete confirmation modal -->
-<div class="modal" id="deleteModal">
-  <div class="card">
-    <h2>🗑️ Delete player</h2>
-    <p>Remove <strong id="deleteTargetName">this player</strong> from the tier list? This can't be undone.</p>
-    <div class="actions">
-      <button class="secondary" id="cancelDelete">Cancel</button>
-      <button class="danger-btn" id="confirmDelete">Delete</button>
-    </div>
-  </div>
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
   let owner = false;
-  let ownerToken = null;
-  let activeFilter = "ALL";
+  let discordUser = null;
+  let discordConfigured = true;
+  let state = { players: [], bracketGenerated: false, rounds: [] };
 
-  const zones = document.querySelectorAll(".dropzone");
-  const tierRows = document.querySelectorAll(".tier");
+  const el = (id) => document.getElementById(id);
 
-  function makePlayer(name, image = "", discordId = ""){
-    const div = document.createElement("div");
-    div.className = "player";
-    if(discordId) div.dataset.discordId = discordId;
+  function showToast(message, isError = false){
+    const t = el('toast');
+    t.textContent = message;
+    t.classList.toggle('error', isError);
+    t.classList.add('show');
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(() => t.classList.remove('show'), 3200);
+  }
 
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.textContent = name.charAt(0).toUpperCase();
-
-    if(image){
-      const img = document.createElement("img");
-      img.src = image;
-      img.alt = "";
-      img.loading = "lazy";
-      img.draggable = false;
-      img.onerror = () => img.remove();
-      avatar.appendChild(img);
+  async function api(path, options = {}){
+    const res = await fetch(path, {
+      ...options,
+      headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }
+    });
+    const body = await res.json().catch(() => ({}));
+    if(!res.ok){
+      throw new Error(body.error || 'Something went wrong');
     }
-
-    const pname = document.createElement("div");
-    pname.className = "pname";
-    pname.textContent = name;
-
-    div.appendChild(avatar);
-    div.appendChild(pname);
-
-    div.addEventListener("pointerdown", e => startDrag(e, div));
-    div.addEventListener("contextmenu", e => openContextMenu(e, div));
-
-    return div;
+    return body;
   }
 
-  // Note: an avatar image is only ever set from a URL the owner pastes in
-  // (see the Add Player form). There is no reliable way to auto-fetch an
-  // arbitrary Discord user's avatar from just their ID without a private
-  // bot token running on a real backend — anything claiming otherwise from
-  // pure client-side JS is not trustworthy long-term.
-
-  // --- Drag & drop (pointer-based: works with mouse AND touch, across tiers) ---
-  let activeDrag = null;
-
-  function startDrag(e, el){
-    if(!owner) return;
-    if(e.pointerType === "mouse" && e.button !== 0) return;
-
-    e.preventDefault();
-
-    const rect = el.getBoundingClientRect();
-    const clone = el.cloneNode(true);
-    clone.classList.add("drag-clone");
-    clone.style.width = rect.width + "px";
-    clone.style.height = rect.height + "px";
-    clone.style.left = rect.left + "px";
-    clone.style.top = rect.top + "px";
-    document.body.appendChild(clone);
-
-    el.classList.add("dragging");
-    document.body.style.userSelect = "none";
-
-    activeDrag = {
-      el, clone,
-      offsetX: e.clientX - rect.left,
-      offsetY: e.clientY - rect.top
-    };
-
-    document.addEventListener("pointermove", onDragMove);
-    document.addEventListener("pointerup", onDragEnd);
-    document.addEventListener("pointercancel", onDragEnd);
+  function escapeHTML(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
-  function onDragMove(e){
-    if(!activeDrag) return;
-    const { clone, offsetX, offsetY } = activeDrag;
-    clone.style.left = (e.clientX - offsetX) + "px";
-    clone.style.top = (e.clientY - offsetY) + "px";
-
-    zones.forEach(z => z.classList.remove("dragover"));
-    const target = document.elementFromPoint(e.clientX, e.clientY);
-    const zone = target?.closest(".dropzone");
-    if(zone) zone.classList.add("dragover");
-  }
-
-  function onDragEnd(e){
-    if(!activeDrag) return;
-    const { el, clone } = activeDrag;
-
-    zones.forEach(z => z.classList.remove("dragover"));
-    const target = document.elementFromPoint(e.clientX, e.clientY);
-    const zone = target?.closest(".dropzone");
-    if(zone) zone.appendChild(el);
-
-    el.classList.remove("dragging");
-    clone.remove();
-    document.body.style.userSelect = "";
-    activeDrag = null;
-
-    document.removeEventListener("pointermove", onDragMove);
-    document.removeEventListener("pointerup", onDragEnd);
-    document.removeEventListener("pointercancel", onDragEnd);
-
-    updateAll();
-    save();
-  }
-
-  function updateCounts(){
-    let total = 0;
-    zones.forEach(z => {
-      const n = z.children.length;
-      total += n;
-      const el = document.querySelector(`[data-count="${z.dataset.tier}"]`);
-      if(el) el.textContent = `${n} player${n === 1 ? "" : "s"}`;
-    });
-    document.getElementById("playerPill").textContent = `${total} player${total === 1 ? "" : "s"}`;
-    document.getElementById("statPlayers").textContent = total;
-    const sCount = document.querySelector('[data-tier="S"]').children.length;
-    document.getElementById("statTop").textContent = sCount;
-  }
-
-  function applyFilters(){
-    const query = document.getElementById("searchInput").value.trim().toLowerCase();
-
-    tierRows.forEach(row => {
-      const tier = row.dataset.row;
-      row.style.display = (activeFilter === "ALL" || activeFilter === tier) ? "" : "none";
-    });
-
-    document.querySelectorAll(".player").forEach(p => {
-      const name = p.querySelector(".pname").textContent.toLowerCase();
-      const matches = !query || name.includes(query);
-      p.classList.toggle("hidden", !matches);
-    });
-  }
-
-  function updateAll(){
-    updateCounts();
-    applyFilters();
-  }
-
-  // --- Right-click context menu ---
-  // "View Discord profile" is available to everyone (owner or not).
-  // "Delete player" only shows up for the owner.
-  const ctxMenu = document.getElementById("ctxMenu");
-  const ctxDiscordBtn = document.getElementById("ctxDiscord");
-  const ctxDeleteBtn = document.getElementById("ctxDelete");
-  const deleteModal = document.getElementById("deleteModal");
-  const deleteTargetName = document.getElementById("deleteTargetName");
-  let ctxTarget = null;
-  let deleteTarget = null;
-
-  function openContextMenu(e, playerEl){
-    const hasDiscord = !!playerEl.dataset.discordId;
-    const canDelete = owner;
-
-    if(!hasDiscord && !canDelete) return; // nothing to show — let the native menu appear
-
-    e.preventDefault();
-    closeContextMenu();
-    ctxTarget = playerEl;
-    playerEl.classList.add("ctx-active");
-
-    ctxDiscordBtn.style.display = hasDiscord ? "flex" : "none";
-    ctxDeleteBtn.style.display = canDelete ? "flex" : "none";
-
-    ctxMenu.classList.add("show");
-
-    // Position within viewport bounds
-    const menuW = 210, menuH = hasDiscord && canDelete ? 96 : 50;
-    let x = e.clientX, y = e.clientY;
-    if(x + menuW > window.innerWidth) x = window.innerWidth - menuW - 10;
-    if(y + menuH > window.innerHeight) y = window.innerHeight - menuH - 10;
-    ctxMenu.style.left = x + "px";
-    ctxMenu.style.top = y + "px";
-  }
-
-  function closeContextMenu(){
-    ctxMenu.classList.remove("show");
-    if(ctxTarget) ctxTarget.classList.remove("ctx-active");
-    ctxTarget = null;
-  }
-
-  document.addEventListener("click", (e) => {
-    if(!ctxMenu.contains(e.target)) closeContextMenu();
-  });
-  document.addEventListener("scroll", closeContextMenu, true);
-  window.addEventListener("blur", closeContextMenu);
-  document.addEventListener("keydown", (e) => {
-    if(e.key === "Escape") closeContextMenu();
-  });
-
-  ctxDiscordBtn.addEventListener("click", () => {
-    if(!ctxTarget || !ctxTarget.dataset.discordId) return;
-    window.open(`https://discord.com/users/${ctxTarget.dataset.discordId}`, "_blank", "noopener");
-    closeContextMenu();
-  });
-
-  ctxDeleteBtn.addEventListener("click", () => {
-    if(!ctxTarget) return;
-    deleteTarget = ctxTarget;
-    deleteTargetName.textContent = deleteTarget.querySelector(".pname").textContent;
-    deleteModal.classList.add("show");
-    closeContextMenu();
-  });
-
-  document.getElementById("cancelDelete").onclick = () => {
-    deleteModal.classList.remove("show");
-    deleteTarget = null;
-  };
-
-  document.getElementById("confirmDelete").onclick = () => {
-    if(deleteTarget){
-      deleteTarget.remove();
-      deleteTarget = null;
-      updateAll();
-      save();
+  function avatarHTML(player){
+    if(!player) return '';
+    if(player.image){
+      return `<img src="${player.image}" alt="" />`;
     }
-    deleteModal.classList.remove("show");
-  };
+    return (player.name || '?').trim().charAt(0).toUpperCase();
+  }
 
-  // --- Save / load via server ---
+  // ---------------- Session / Discord ----------------
 
-  async function save(){
-    if(!owner || !ownerToken) return;
-
-    const data = {};
-    zones.forEach(z => {
-      data[z.dataset.tier] = [...z.children].map(p => ({
-        name: p.querySelector('.pname').textContent,
-        image: p.querySelector('.avatar img')?.getAttribute('src') || "",
-        discordId: p.dataset.discordId || ""
-      }));
-    });
-
+  async function loadSession(){
     try {
-      const res = await fetch("/api/tierlist", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + ownerToken
-        },
-        body: JSON.stringify(data)
-      });
-      if(!res.ok){
-        console.error("Save failed", await res.text());
-      }
+      const s = await api('/api/session');
+      discordUser = s.discordUser;
+      owner = s.isOwner;
+      discordConfigured = s.discordConfigured;
     } catch(err){
-      console.error("Network error while saving", err);
+      discordUser = null;
+      owner = false;
     }
+    renderDiscordArea();
   }
 
-  async function load(){
-    try {
-      const res = await fetch("/api/tierlist");
-      const data = await res.json();
-
-      zones.forEach(z => z.innerHTML = "");
-
-      Object.entries(data).forEach(([tier, players]) => {
-        const zone = document.querySelector(`[data-tier="${tier}"]`);
-        if(!zone) return;
-        players.forEach(p => zone.appendChild(makePlayer(p.name, p.image, p.discordId)));
-      });
-
-      updateAll();
-    } catch(err){
-      console.error("Could not load the tier list", err);
+  function renderDiscordArea(){
+    const area = el('discordArea');
+    if(discordUser){
+      area.innerHTML = `
+        <div class="discord-pill">
+          <img src="${discordUser.avatarUrl}" alt="" />
+          <span>${escapeHTML(discordUser.username)}</span>
+        </div>
+      `;
+    } else {
+      area.innerHTML = `<a href="/auth/discord" class="discord-btn" style="text-decoration:none; display:inline-flex; align-items:center;">💬 Login with Discord</a>`;
     }
+    ownerBtnEl.textContent = owner ? '👑 Log out (owner)' : '👑 Owner Area';
   }
 
-  // Search + filters
-  document.getElementById("searchInput").addEventListener("input", applyFilters);
+  // ---------------- Rendering ----------------
 
-  document.getElementById("filterChips").addEventListener("click", e => {
-    const btn = e.target.closest(".chip");
-    if(!btn) return;
-    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-    btn.classList.add("active");
-    activeFilter = btn.dataset.filter;
-    applyFilters();
-  });
-
-  document.getElementById("sizeToggle").addEventListener("click", e => {
-    const btn = e.target.closest(".size-btn");
-    if(!btn) return;
-    document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    document.body.classList.remove("size-s", "size-m", "size-l");
-    document.body.classList.add("size-" + btn.dataset.size);
-  });
-
-  // Owner login
-  const loginModal = document.getElementById("loginModal");
-  const ownerBtnEl = document.getElementById("ownerBtn");
-
-  function setOwnerUI(isOwner){
-    owner = isOwner;
-    document.body.classList.toggle("is-owner", isOwner);
-    document.getElementById("addBtn").classList.toggle("show", isOwner);
-    ownerBtnEl.innerHTML = isOwner
-      ? '<span class="crown">👑</span> Log out'
-      : '<span class="crown">👑</span> Owner Area';
-    if(!isOwner) closeContextMenu();
+  function renderAll(){
+    renderStats();
+    renderRegistration();
+    renderBracket();
   }
 
-  async function restoreOwnerSession(){
-    const stored = localStorage.getItem("ownerToken");
-    if(!stored) return;
+  function renderStats(){
+    el('statPlayers').textContent = state.players.length;
+    el('playerPill').textContent = `${state.players.length} player${state.players.length === 1 ? '' : 's'}`;
+    el('statRounds').textContent = state.rounds.length;
 
-    try {
-      const res = await fetch("/api/verify", {
-        headers: { "Authorization": "Bearer " + stored }
-      });
-      if(res.ok){
-        ownerToken = stored;
-        setOwnerUI(true);
-      } else {
-        localStorage.removeItem("ownerToken");
-      }
-    } catch(err){
-      // Server unreachable — leave the stored token as-is, try again next load.
-    }
+    let confirmed = 0, total = 0;
+    state.rounds.forEach(r => r.matches.forEach(m => {
+      if(m.player1 && m.player2){ total++; if(m.status === 'confirmed') confirmed++; }
+    }));
+    el('statDone').textContent = `${confirmed}/${total || 0}`;
   }
 
-  ownerBtnEl.onclick = () => {
-    if(owner){
-      ownerToken = null;
-      localStorage.removeItem("ownerToken");
-      setOwnerUI(false);
+  function renderRegistration(){
+    const grid = el('playersGrid');
+    grid.innerHTML = '';
+    el('playersEmpty').style.display = state.players.length ? 'none' : 'block';
+
+    state.players.forEach(p => {
+      const chip = document.createElement('div');
+      chip.className = 'player-chip';
+      chip.innerHTML = `
+        <div class="avatar">${avatarHTML(p)}</div>
+        <div class="pname">${escapeHTML(p.name)}</div>
+        ${owner ? `<button class="del" data-id="${p.id}" title="Remove player">✕</button>` : ''}
+      `;
+      grid.appendChild(chip);
+    });
+
+    grid.querySelectorAll('.del').forEach(btn => {
+      btn.onclick = () => deletePlayer(btn.dataset.id);
+    });
+
+    el('registerStatus').textContent = state.bracketGenerated
+      ? 'Closed — the bracket has been generated'
+      : 'Open — log in with Discord to join';
+
+    const gate = el('loginGate');
+    if(state.bracketGenerated){
+      gate.innerHTML = `<p>Registrations are closed, the bracket has already been generated.</p>`;
       return;
     }
-    loginModal.classList.add("show");
-    document.getElementById("passwordInput").focus();
-  };
 
-  document.getElementById("cancelLogin").onclick = () => {
-    loginModal.classList.remove("show");
-  };
+    if(!discordUser){
+      gate.innerHTML = discordConfigured
+        ? `<p>You must log in with Discord before you can register.</p><a href="/auth/discord" class="discord-btn" style="text-decoration:none; display:inline-flex; align-items:center;">💬 Login with Discord</a>`
+        : `<p>Discord login isn't configured on this server yet.</p>`;
+      return;
+    }
 
-  document.getElementById("loginBtn").onclick = async () => {
-    const value = document.getElementById("passwordInput").value;
-    const loginBtn = document.getElementById("loginBtn");
-    loginBtn.disabled = true;
+    const already = state.players.some(p => p.discordId === discordUser.id);
+    if(already){
+      gate.innerHTML = `<p>✅ You're registered as <strong>${escapeHTML(discordUser.username)}</strong>.</p>`;
+      return;
+    }
 
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: value })
+    gate.innerHTML = `
+      <div class="register-row" style="flex:1">
+        <input type="text" id="playerName" placeholder="In-game name (optional, defaults to your Discord name)" maxlength="30" />
+        <button class="primary" id="registerBtn">Register as ${escapeHTML(discordUser.username)}</button>
+      </div>
+    `;
+    el('registerBtn').onclick = async () => {
+      const name = el('playerName').value.trim();
+      try {
+        await api('/api/register', { method: 'POST', body: JSON.stringify({ name }) });
+        await loadState();
+        showToast('You are registered!');
+      } catch(err){
+        showToast(err.message, true);
+      }
+    };
+  }
+
+  function matchSlotHTML(player, isWinner){
+    if(!player){
+      return `<div class="match-slot"><div class="avatar">?</div><div class="name tbd">TBD</div></div>`;
+    }
+    return `
+      <div class="match-slot ${isWinner ? 'winner' : ''}">
+        <div class="avatar">${avatarHTML(player)}</div>
+        <div class="name">${escapeHTML(player.name)}</div>
+      </div>
+    `;
+  }
+
+  function renderBracket(){
+    const scroll = el('bracketScroll');
+    scroll.innerHTML = '';
+    el('bracketEmpty').style.display = state.bracketGenerated ? 'none' : 'block';
+    el('bracketStatus').textContent = state.bracketGenerated
+      ? 'Live — report and confirm your results'
+      : 'Waiting for the owner to generate the bracket';
+    el('ownerBracketControls').style.display = owner ? 'flex' : 'none';
+
+    if(!state.bracketGenerated) return;
+
+    state.rounds.forEach(round => {
+      const col = document.createElement('div');
+      col.className = 'round-col';
+      col.innerHTML = `<div class="round-title">${round.name}</div><div class="matches"></div>`;
+      const matchesWrap = col.querySelector('.matches');
+
+      round.matches.forEach(match => {
+        matchesWrap.appendChild(renderMatchCard(match));
       });
 
-      if(res.ok){
-        const { token } = await res.json();
-        ownerToken = token;
-        localStorage.setItem("ownerToken", token);
-        setOwnerUI(true);
+      scroll.appendChild(col);
+    });
+  }
 
-        loginModal.classList.remove("show");
-        document.getElementById("passwordInput").value = "";
-      } else {
-        alert("Incorrect password");
+  function renderMatchCard(match){
+    const card = document.createElement('div');
+    card.className = 'match-card' + (match.status === 'confirmed' ? ' confirmed' : '');
+
+    const isWinner1 = match.winner && match.player1 && match.winner.id === match.player1.id;
+    const isWinner2 = match.winner && match.player2 && match.winner.id === match.player2.id;
+
+    card.innerHTML = `
+      ${matchSlotHTML(match.player1, isWinner1)}
+      <div class="vs">VS</div>
+      ${matchSlotHTML(match.player2, isWinner2)}
+      <div class="match-actions"></div>
+    `;
+
+    const actions = card.querySelector('.match-actions');
+    const ready = match.player1 && match.player2;
+    const myDiscordId = discordUser ? discordUser.id : null;
+    const isParticipant = ready && (match.player1.discordId === myDiscordId || match.player2.discordId === myDiscordId);
+
+    if(!ready){
+      actions.innerHTML = `<div class="status-note">Waiting for both players</div>`;
+    } else if(match.status === 'confirmed'){
+      actions.innerHTML = `<div class="status-note">✅ Confirmed — ${escapeHTML(match.winner.name)} advances</div>`;
+    } else if(match.status === 'awaiting-confirmation'){
+      const reportedName = match.reportedWinner === match.player1.id ? match.player1.name : match.player2.name;
+      const p1Confirmed = !!match.confirmations[match.player1.id];
+      const p2Confirmed = !!match.confirmations[match.player2.id];
+      let confirmButtons = '';
+      if(match.player1.discordId === myDiscordId){
+        confirmButtons += `<button class="confirm-btn" data-confirm-mine ${p1Confirmed ? 'disabled' : ''}>${p1Confirmed ? '✓ You confirmed' : 'I confirm this result'}</button>`;
       }
+      if(match.player2.discordId === myDiscordId){
+        confirmButtons += `<button class="confirm-btn" data-confirm-mine ${p2Confirmed ? 'disabled' : ''}>${p2Confirmed ? '✓ You confirmed' : 'I confirm this result'}</button>`;
+      }
+      actions.innerHTML = `
+        <div class="status-note wait">Reported: ${escapeHTML(reportedName)} won — needs both confirmations (${p1Confirmed ? 1 : 0}${p2Confirmed ? 1 : 0}/2)</div>
+        ${confirmButtons || '<div class="status-note">Only the two players can confirm.</div>'}
+      `;
+    } else {
+      if(isParticipant || owner){
+        actions.innerHTML = `
+          <button class="report-btn" data-report="${match.player1.id}">${escapeHTML(match.player1.name)} won</button>
+          <button class="report-btn" data-report="${match.player2.id}">${escapeHTML(match.player2.name)} won</button>
+        `;
+      } else {
+        actions.innerHTML = `<div class="status-note">Only the two players can report a result.</div>`;
+      }
+    }
+
+    if(ready && owner){
+      const ownerMini = document.createElement('div');
+      ownerMini.className = 'owner-mini';
+      ownerMini.innerHTML = `
+        <select data-owner-select>
+          <option value="${match.player1.id}">${escapeHTML(match.player1.name)}</option>
+          <option value="${match.player2.id}">${escapeHTML(match.player2.name)}</option>
+        </select>
+        <button class="secondary" data-owner-force>Force win</button>
+      `;
+      actions.appendChild(ownerMini);
+    }
+
+    card.querySelectorAll('[data-report]').forEach(btn => {
+      btn.onclick = () => reportResult(match.id, btn.dataset.report);
+    });
+    card.querySelectorAll('[data-confirm-mine]').forEach(btn => {
+      btn.onclick = () => confirmResult(match.id);
+    });
+    const forceBtn = card.querySelector('[data-owner-force]');
+    if(forceBtn){
+      forceBtn.onclick = () => {
+        const winnerId = card.querySelector('[data-owner-select]').value;
+        ownerSetResult(match.id, winnerId);
+      };
+    }
+
+    return card;
+  }
+
+  // ---------------- Actions ----------------
+
+  async function loadState(){
+    try {
+      state = await api('/api/state');
+      renderAll();
     } catch(err){
-      alert("Could not reach the server");
-    } finally {
-      loginBtn.disabled = false;
+      showToast('Could not load the tournament state', true);
+    }
+  }
+
+  async function deletePlayer(playerId){
+    if(!confirm('Remove this player?')) return;
+    try {
+      await api('/api/owner/delete-player', { method: 'POST', body: JSON.stringify({ playerId }) });
+      await loadState();
+      showToast('Player removed');
+    } catch(err){
+      showToast(err.message, true);
+    }
+  }
+
+  async function reportResult(matchId, winnerId){
+    try {
+      await api('/api/report-result', { method: 'POST', body: JSON.stringify({ matchId, winnerId }) });
+      await loadState();
+      showToast('Result reported — waiting for both players to confirm');
+    } catch(err){
+      showToast(err.message, true);
+    }
+  }
+
+  async function confirmResult(matchId){
+    try {
+      await api('/api/confirm-result', { method: 'POST', body: JSON.stringify({ matchId }) });
+      await loadState();
+      showToast('Confirmation saved');
+    } catch(err){
+      showToast(err.message, true);
+    }
+  }
+
+  async function ownerSetResult(matchId, winnerId){
+    try {
+      await api('/api/owner/set-result', { method: 'POST', body: JSON.stringify({ matchId, winnerId }) });
+      await loadState();
+      showToast('Result forced by owner');
+    } catch(err){
+      showToast(err.message, true);
+    }
+  }
+
+  el('generateBtn').onclick = async () => {
+    try {
+      await api('/api/owner/generate-bracket', { method: 'POST' });
+      await loadState();
+      showToast('Bracket generated!');
+    } catch(err){
+      showToast(err.message, true);
     }
   };
 
-  // Add player
-  const addModal = document.getElementById("addModal");
-  const discordIdInput = document.getElementById("playerDiscordId");
-  const uploadBox = document.getElementById("uploadBox");
-  const uploadPreviewImg = document.getElementById("uploadPreviewImg");
-  const playerImageFile = document.getElementById("playerImageFile");
-  let selectedImageData = "";
-
-  function resetAddForm(){
-    discordIdInput.value = "";
-    selectedImageData = "";
-    uploadPreviewImg.src = "";
-    uploadBox.classList.remove("has-image");
-    playerImageFile.value = "";
-  }
-
-  uploadBox.addEventListener("click", () => playerImageFile.click());
-
-  playerImageFile.addEventListener("change", () => {
-    const file = playerImageFile.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        // Resize/compress client-side so the tier list stays light
-        // and fits the server's base64-image size limit.
-        const maxSize = 320;
-        let w = img.width, h = img.height;
-        if(w > h && w > maxSize){ h = Math.round(h * maxSize / w); w = maxSize; }
-        else if(h >= w && h > maxSize){ w = Math.round(w * maxSize / h); h = maxSize; }
-
-        const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-
-        selectedImageData = canvas.toDataURL("image/jpeg", 0.82);
-        uploadPreviewImg.src = selectedImageData;
-        uploadBox.classList.add("has-image");
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  document.getElementById("addBtn").onclick = () => {
-    addModal.classList.add("show");
+  el('resetBracketBtn').onclick = async () => {
+    if(!confirm('Reset the bracket and reopen registrations? Players stay registered.')) return;
+    try {
+      await api('/api/owner/reset-bracket', { method: 'POST' });
+      await loadState();
+      showToast('Bracket reset');
+    } catch(err){
+      showToast(err.message, true);
+    }
   };
 
-  document.getElementById("cancelAdd").onclick = () => {
-    addModal.classList.remove("show");
-    resetAddForm();
+  el('resetAllBtn').onclick = async () => {
+    if(!confirm('This removes ALL players and the bracket. Continue?')) return;
+    try {
+      await api('/api/owner/reset-all', { method: 'POST' });
+      await loadState();
+      showToast('Everything has been reset');
+    } catch(err){
+      showToast(err.message, true);
+    }
   };
 
-  document.getElementById("savePlayer").onclick = () => {
-    const name = document.getElementById("playerName").value.trim();
-    const tier = document.getElementById("playerTier").value;
-    const discordId = discordIdInput.value.trim();
+  // ---------------- Owner login (Discord required first) ----------------
 
-    if(!name) return;
+  const loginModal = el('loginModal');
+  const ownerBtnEl = el('ownerBtn');
 
-    document.querySelector(`[data-tier="${tier}"]`)
-      .appendChild(makePlayer(name, selectedImageData, discordId));
-
-    updateAll();
-    save();
-
-    document.getElementById("playerName").value = "";
-    resetAddForm();
-    addModal.classList.remove("show");
+  ownerBtnEl.onclick = async () => {
+    if(owner){
+      await api('/api/owner/logout', { method: 'POST' }).catch(() => {});
+      owner = false;
+      renderDiscordArea();
+      renderAll();
+      return;
+    }
+    if(!discordUser){
+      showToast('Log in with Discord first, then open Owner Area.', true);
+      return;
+    }
+    loginModal.classList.add('show');
+    el('passwordInput').focus();
   };
 
-  load();
-  restoreOwnerSession();
+  el('cancelLogin').onclick = () => loginModal.classList.remove('show');
+
+  el('loginBtn').onclick = async () => {
+    const password = el('passwordInput').value;
+    const btn = el('loginBtn');
+    btn.disabled = true;
+    try {
+      await api('/api/owner/login', { method: 'POST', body: JSON.stringify({ password }) });
+      owner = true;
+      renderDiscordArea();
+      renderAll();
+      loginModal.classList.remove('show');
+      el('passwordInput').value = '';
+      showToast('Owner mode enabled');
+    } catch(err){
+      showToast(err.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  (async () => {
+    await loadSession();
+    await loadState();
+  })();
 </script>
 </body>
 </html>
